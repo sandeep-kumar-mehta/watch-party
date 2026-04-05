@@ -7,6 +7,8 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e8e8f0; }
+
+    /* ── JOIN SCREEN ── */
     #joinScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
     .join-card { background:#1a1a24; border:1px solid #2a2a3a; border-radius:16px; padding:36px 28px; width:100%; max-width:380px; text-align:center; }
     .join-card h1 { font-size:26px; margin-bottom:6px; }
@@ -18,6 +20,8 @@
     .btn-secondary { width:100%; padding:11px; background:#252535; color:#ccc; border:1px solid #333; border-radius:10px; font-size:14px; cursor:pointer; }
     .btn-secondary:hover { background:#2e2e45; }
     .divider { margin:14px 0; color:#444; font-size:12px; }
+
+    /* ── APP SCREEN ── */
     #appScreen { display:none; flex-direction:column; min-height:100vh; }
     .topbar { padding:10px 16px; background:#1a1a24; border-bottom:1px solid #2a2a3a; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:10; }
     .topbar h2 { font-size:15px; font-weight:600; white-space:nowrap; }
@@ -26,8 +30,12 @@
     .online-pill { margin-left:auto; background:#1a3a1a; color:#4caf50; border-radius:20px; padding:4px 10px; font-size:12px; white-space:nowrap; }
     .live-dot { width:7px; height:7px; background:#4caf50; border-radius:50%; display:inline-block; margin-right:4px; animation:pulse 1.5s infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ── LAYOUT ── */
     .main-area { display:flex; flex:1; }
     .video-area { flex:1; display:flex; flex-direction:column; min-width:0; }
+
+    /* ── UPLOAD MODAL ── */
     .upload-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center; padding:16px; }
     .upload-overlay.show { display:flex; }
     .upload-modal { background:#1a1a24; border:1px solid #2a2a3a; border-radius:16px; padding:24px; width:100%; max-width:440px; max-height:90vh; overflow-y:auto; }
@@ -38,6 +46,8 @@
     .tab-btn.active { background:#6c63ff; border-color:#6c63ff; color:#fff; }
     .tab-content { display:none; }
     .tab-content.active { display:block; }
+
+    /* Cloudinary tab */
     .cloud-drop { border:2px dashed #333; border-radius:12px; padding:28px 20px; text-align:center; cursor:pointer; margin-bottom:12px; }
     .cloud-drop:hover,.cloud-drop.dragover { border-color:#6c63ff; background:#1e1e30; }
     .cloud-drop .icon { font-size:30px; margin-bottom:8px; }
@@ -55,36 +65,66 @@
     .hint-box { background:#1e1e2e; border-radius:8px; padding:12px; font-size:11px; color:#666; margin-bottom:12px; line-height:1.6; }
     .hint-box b { color:#aaa; }
     .hint-box a { color:#6c63ff; }
+
+    /* URL tab */
     .url-input-wrap { margin-bottom:12px; }
     .url-input-wrap label { font-size:12px; color:#888; display:block; margin-bottom:6px; }
     .url-input-wrap input { width:100%; padding:10px 12px; background:#252535; border:1px solid #333; border-radius:8px; color:#fff; font-size:13px; outline:none; }
     .url-input-wrap input:focus { border-color:#6c63ff; }
-    .url-hint { font-size:11px; color:#555; margin-top:5px; line-height:1.5; }
+
+    /* Google Drive notice banner */
+    .drive-notice { background:#1a2a1a; border:1px solid #2a4a2a; border-radius:8px; padding:10px 12px; font-size:11px; color:#7fc97f; margin-bottom:10px; line-height:1.6; display:none; }
+    .drive-notice.show { display:block; }
+
     .modal-close { width:100%; padding:10px; background:none; border:1px solid #333; border-radius:8px; color:#888; font-size:13px; cursor:pointer; margin-top:4px; }
     .modal-close:hover { background:#252535; }
+
+    /* ── VIDEO AREA ── */
     .video-container { flex:1; background:#000; position:relative; display:flex; align-items:center; justify-content:center; min-height:260px; }
     #mainVideo { width:100%; height:100%; object-fit:contain; display:none; }
+
+    /* Google Drive iframe */
+    #driveFrame { position:absolute; top:0; left:0; width:100%; height:100%; border:none; display:none; }
+
+    /* Drive banner shown over video area when iframe is active */
+    .drive-banner { display:none; position:absolute; top:8px; left:50%; transform:translateX(-50%); background:rgba(108,99,255,0.85); color:#fff; font-size:11px; padding:4px 14px; border-radius:20px; z-index:5; white-space:nowrap; pointer-events:none; }
+    .drive-banner.show { display:block; }
+
     .video-placeholder { display:flex; flex-direction:column; align-items:center; gap:12px; color:#555; padding:20px; text-align:center; }
     .video-placeholder .icon { width:68px; height:68px; background:#1a1a24; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; border:1px solid #2a2a3a; }
     .video-placeholder p { font-size:13px; line-height:1.6; }
     .video-placeholder button { background:#6c63ff; color:white; border:none; border-radius:8px; padding:10px 20px; font-size:13px; cursor:pointer; }
     .video-placeholder button:hover { background:#5a52e0; }
+
+    /* Floating reactions */
     .reaction-float { position:absolute; font-size:28px; pointer-events:none; animation:floatUp 2s ease forwards; }
     @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-120px) scale(1.4)} }
-    .loading-overlay { display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; flex-direction:column; gap:12px; }
+
+    /* Loading spinner */
+    .loading-overlay { display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; flex-direction:column; gap:12px; z-index:3; }
     .loading-overlay.show { display:flex; }
     .spinner { width:38px; height:38px; border:3px solid #333; border-top-color:#6c63ff; border-radius:50%; animation:spin 0.8s linear infinite; }
     @keyframes spin { to{transform:rotate(360deg)} }
+
+    /* Progress bar — hidden for Drive (iframe) */
     .progress-bar-wrap { padding:7px 14px 4px; background:#151520; }
     .progress-bar { height:5px; background:#2a2a3a; border-radius:3px; cursor:pointer; }
     .progress-fill { height:100%; background:#6c63ff; border-radius:3px; width:0%; pointer-events:none; }
+    .progress-bar-wrap.drive-mode { opacity:0.25; pointer-events:none; }
+
+    /* Controls */
     .controls { padding:8px 14px; background:#151520; border-top:1px solid #1e1e2e; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .ctrl-btn { background:#252535; border:1px solid #333; border-radius:8px; padding:7px 12px; color:#ccc; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px; }
     .ctrl-btn:hover { background:#2e2e45; color:#fff; }
+    .ctrl-btn:disabled { opacity:0.35; cursor:not-allowed; }
     .time-info { font-size:12px; color:#666; margin-left:auto; font-variant-numeric:tabular-nums; }
+
+    /* Reactions */
     .reactions-bar { display:flex; gap:6px; padding:7px 14px; background:#151520; border-top:1px solid #1e1e2e; flex-wrap:wrap; align-items:center; }
     .react-btn { background:#1e1e2e; border:1px solid #2a2a3a; border-radius:20px; padding:4px 12px; font-size:15px; cursor:pointer; }
     .react-btn:hover { transform:scale(1.2); }
+
+    /* ── CHAT PANEL ── */
     .chat-panel { width:280px; border-left:1px solid #2a2a3a; display:flex; flex-direction:column; background:#13131e; }
     .chat-title { padding:11px 14px; border-bottom:1px solid #2a2a3a; font-size:13px; font-weight:500; color:#aaa; }
     .messages { flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:9px; scrollbar-width:thin; scrollbar-color:#2a2a3a transparent; }
@@ -103,6 +143,8 @@
     .chat-input:focus { border-color:#6c63ff; }
     .send-btn { background:#6c63ff; border:none; border-radius:50%; width:34px; height:34px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; align-self:flex-end; }
     .send-btn:hover { background:#5a52e0; }
+
+    /* ── RESPONSIVE ── */
     @media (max-width:768px) {
       body { overflow-y:auto; }
       #appScreen { flex-direction:column; }
@@ -116,6 +158,7 @@
 </head>
 <body>
 
+<!-- ════════════════════ JOIN SCREEN ════════════════════ -->
 <div id="joinScreen">
   <div class="join-card">
     <h1>🎬 Watch Party</h1>
@@ -129,17 +172,18 @@
   </div>
 </div>
 
-<!-- UPLOAD MODAL -->
+<!-- ════════════════════ UPLOAD MODAL ════════════════════ -->
 <div class="upload-overlay" id="uploadOverlay">
   <div class="upload-modal">
     <h3>📹 Video Add Karo</h3>
-    <p>Ek baar upload karo — room mein sabko dikheга!</p>
+    <p>Ek baar upload karo — room mein sabko dikhega!</p>
 
     <div class="upload-tabs">
       <button class="tab-btn active" onclick="switchTab('cloudinary')">☁️ Cloudinary Upload</button>
       <button class="tab-btn" onclick="switchTab('url')">🔗 URL Paste Karo</button>
     </div>
 
+    <!-- ── CLOUDINARY TAB ── -->
     <div class="tab-content active" id="tab-cloudinary">
       <div class="hint-box">
         <b>Pehli baar? Cloudinary setup karo (free):</b><br>
@@ -172,18 +216,31 @@
       </div>
     </div>
 
+    <!-- ── URL TAB ── -->
     <div class="tab-content" id="tab-url">
       <div class="hint-box">
         <b>Google Drive se video:</b><br>
         1. Drive pe video upload karo<br>
         2. File → Share → "Anyone with the link" karo<br>
-        3. Share link copy karo → yahan paste karo<br><br>
-        <b>Direct MP4 URL bhi kaam karta hai</b> (Cloudinary, AWS S3, etc.)
+        3. Share link copy karo → yahan paste karo ✅<br><br>
+        <b>Direct MP4 URL bhi kaam karta hai</b> (Cloudinary, AWS S3, etc.)<br><br>
+        ⚠️ <b>Google Drive note:</b> Play/Pause sync kaam nahi karega Drive ke saath.
+        Full sync chahiye to Cloudinary use karo.
       </div>
       <div class="url-input-wrap">
         <label>Video URL paste karo</label>
-        <input type="url" id="videoUrlInput" placeholder="https://drive.google.com/file/d/... ya direct .mp4 URL" />
+        <input type="url" id="videoUrlInput"
+               placeholder="https://drive.google.com/file/d/... ya direct .mp4 URL"
+               oninput="checkUrlType(this.value)" />
       </div>
+
+      <!-- Auto-shown when Drive URL is detected -->
+      <div class="drive-notice" id="driveNotice">
+        ✅ Google Drive URL detect hua!<br>
+        Auto-convert hoga → iframe embed se chalega.<br>
+        ⚠️ Play/Pause sync sirf Cloudinary/direct URLs pe kaam karta hai.
+      </div>
+
       <button class="btn-primary" onclick="loadFromUrl()" style="margin-bottom:8px;">Video Load Karo →</button>
     </div>
 
@@ -191,7 +248,7 @@
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- ════════════════════ MAIN APP ════════════════════ -->
 <div id="appScreen">
   <div class="topbar">
     <h2>🎬 Watch Party</h2>
@@ -201,32 +258,49 @@
 
   <div class="main-area">
     <div class="video-area">
+
       <div class="video-container" id="videoContainer" onclick="handleVideoClick(event)">
+
+        <!-- Normal video element (MP4 / Cloudinary) -->
         <video id="mainVideo"></video>
+
+        <!-- Google Drive iframe (shown only for Drive URLs) -->
+        <iframe id="driveFrame" allowfullscreen allow="autoplay"></iframe>
+
+        <!-- Drive mode label -->
+        <div class="drive-banner" id="driveBanner">📺 Google Drive — sync limited</div>
+
+        <!-- Empty state placeholder -->
         <div class="video-placeholder" id="placeholder">
           <div class="icon">🎬</div>
           <p>Room mein abhi koi video nahi hai</p>
           <button onclick="openUploadModal()">+ Video Add Karo</button>
         </div>
+
+        <!-- Loading spinner -->
         <div class="loading-overlay" id="loadingOverlay">
           <div class="spinner"></div>
           <p style="font-size:13px;color:#aaa;">Video load ho rahi hai...</p>
         </div>
+
       </div>
 
-      <div class="progress-bar-wrap">
+      <!-- Progress bar (dim in Drive mode) -->
+      <div class="progress-bar-wrap" id="progressBarWrap">
         <div class="progress-bar" onclick="seekVideo(event)">
           <div class="progress-fill" id="progressFill"></div>
         </div>
       </div>
 
+      <!-- Controls -->
       <div class="controls">
         <button class="ctrl-btn" id="playBtn" onclick="togglePlay()">▶ Play</button>
-        <button class="ctrl-btn" onclick="requestSync()">🔄 Sync</button>
+        <button class="ctrl-btn" id="syncBtn" onclick="requestSync()">🔄 Sync</button>
         <button class="ctrl-btn" onclick="openUploadModal()">📹 Video Change</button>
         <span class="time-info" id="timeDisplay">0:00 / 0:00</span>
       </div>
 
+      <!-- Reaction bar -->
       <div class="reactions-bar">
         <span style="font-size:11px;color:#555;margin-right:4px;">React:</span>
         <button class="react-btn" onclick="sendReaction('😂')">😂</button>
@@ -236,8 +310,10 @@
         <button class="react-btn" onclick="sendReaction('👏')">👏</button>
         <button class="react-btn" onclick="sendReaction('😭')">😭</button>
       </div>
-    </div>
 
+    </div><!-- /video-area -->
+
+    <!-- ── CHAT PANEL ── -->
     <div class="chat-panel">
       <div class="chat-title">💬 Live Chat</div>
       <div class="messages" id="messageList"></div>
@@ -249,43 +325,66 @@
         </button>
       </div>
     </div>
-  </div>
-</div>
 
+  </div><!-- /main-area -->
+</div><!-- /appScreen -->
+
+<!-- Socket.IO client (provided by your Node server) -->
 <script src="/socket.io/socket.io.js"></script>
-<script>
-  const socket = io();
-  let myName = '', myRoomId = '';
-  let video = document.getElementById('mainVideo');
-  let isSyncing = false;
 
-  function generateRoomId() { return Math.random().toString(36).substring(2,8).toUpperCase(); }
+<script>
+  // ═══════════════════════════════════════════════════════
+  //  STATE
+  // ═══════════════════════════════════════════════════════
+  const socket      = io();
+  let myName        = '';
+  let myRoomId      = '';
+  let isSyncing     = false;
+  let isDriveMode   = false;   // true when iframe (Google Drive) is active
+
+  const video          = document.getElementById('mainVideo');
+  const driveFrame     = document.getElementById('driveFrame');
+  const driveBanner    = document.getElementById('driveBanner');
+  const placeholder    = document.getElementById('placeholder');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  const progressBarWrap= document.getElementById('progressBarWrap');
+  const playBtn        = document.getElementById('playBtn');
+
+  // ═══════════════════════════════════════════════════════
+  //  JOIN / ROOM
+  // ═══════════════════════════════════════════════════════
+  function generateRoomId() {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+  }
 
   function createRoom() {
-    let name = document.getElementById('nameInput').value.trim();
+    const name = document.getElementById('nameInput').value.trim();
     if (!name) { alert('Naam likho!'); return; }
     document.getElementById('roomInput').value = generateRoomId();
     joinRoom();
   }
 
   function joinRoom() {
-    let name = document.getElementById('nameInput').value.trim();
-    let roomId = document.getElementById('roomInput').value.trim().toUpperCase();
-    if (!name) { alert('Naam likho!'); return; }
+    const name   = document.getElementById('nameInput').value.trim();
+    const roomId = document.getElementById('roomInput').value.trim().toUpperCase();
+    if (!name)   { alert('Naam likho!'); return; }
     if (!roomId) { alert('Room ID likho ya Naya Room banao!'); return; }
-    myName = name; myRoomId = roomId;
+    myName   = name;
+    myRoomId = roomId;
     socket.emit('join-room', { roomId, userName: name });
     document.getElementById('joinScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'flex';
+    document.getElementById('appScreen').style.display  = 'flex';
     document.getElementById('roomIdDisplay').textContent = roomId;
   }
 
   function copyRoomId() {
-    navigator.clipboard.writeText(myRoomId).then(() => alert('Room ID copy hua: ' + myRoomId + '\nDost ko bhejo!'));
+    navigator.clipboard.writeText(myRoomId)
+      .then(() => alert('Room ID copy hua: ' + myRoomId + '\nDost ko bhejo!'));
   }
 
-  // ---- Socket Events ----
-
+  // ═══════════════════════════════════════════════════════
+  //  SOCKET EVENTS
+  // ═══════════════════════════════════════════════════════
   socket.on('join-confirmed', ({ users, videoUrl, videoName }) => {
     updateOnlineCount(users.length);
     addSystemMsg('✅ Room join ho gaya! (' + users.length + ' online)');
@@ -320,15 +419,17 @@
   });
 
   socket.on('video-play', ({ currentTime, userName }) => {
+    if (isDriveMode) { addSystemMsg('▶ ' + userName + ' ne play kiya (Drive sync limited)'); return; }
     isSyncing = true;
     video.currentTime = currentTime;
-    video.play().catch(()=>{});
+    video.play().catch(() => {});
     updatePlayBtn(true);
     addSystemMsg('▶ ' + userName + ' ne play kiya');
     setTimeout(() => isSyncing = false, 600);
   });
 
   socket.on('video-pause', ({ currentTime, userName }) => {
+    if (isDriveMode) { addSystemMsg('⏸ ' + userName + ' ne pause kiya (Drive sync limited)'); return; }
     isSyncing = true;
     video.currentTime = currentTime;
     video.pause();
@@ -338,6 +439,7 @@
   });
 
   socket.on('video-seek', ({ currentTime, userName }) => {
+    if (isDriveMode) return;
     isSyncing = true;
     video.currentTime = currentTime;
     addSystemMsg('⏩ ' + userName + ' → ' + formatTime(currentTime));
@@ -345,122 +447,241 @@
   });
 
   socket.on('sync-state', ({ time, isPlaying }) => {
+    if (isDriveMode) { addSystemMsg('🔄 Sync (Drive mode — seek manually)'); return; }
     isSyncing = true;
     video.currentTime = time;
-    if (isPlaying) video.play().catch(()=>{}); else video.pause();
+    if (isPlaying) video.play().catch(() => {}); else video.pause();
     updatePlayBtn(isPlaying);
     addSystemMsg('✅ Sync! ' + formatTime(time));
     setTimeout(() => isSyncing = false, 600);
   });
 
-  // ---- Upload Modal ----
+  // ═══════════════════════════════════════════════════════
+  //  AUTO-SYNC HEARTBEAT
+  //  Every 5 seconds: tell server current position so late
+  //  joiners get the right timestamp.
+  // ═══════════════════════════════════════════════════════
+  setInterval(() => {
+    if (myRoomId && !isDriveMode && video.src && video.src !== window.location.href && !video.paused) {
+      // Silent position broadcast — server stores it, new joiners get it via request-sync
+      socket.emit('video-seek', { roomId: myRoomId, currentTime: video.currentTime });
+    }
+  }, 5000); // every 5 seconds
 
-  function openUploadModal() { document.getElementById('uploadOverlay').classList.add('show'); }
+  // ═══════════════════════════════════════════════════════
+  //  UPLOAD MODAL
+  // ═══════════════════════════════════════════════════════
+  function openUploadModal()  { document.getElementById('uploadOverlay').classList.add('show'); }
   function closeUploadModal() { document.getElementById('uploadOverlay').classList.remove('show'); }
 
   function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&tab==='cloudinary')||(i===1&&tab==='url')));
-    document.getElementById('tab-cloudinary').classList.toggle('active', tab==='cloudinary');
-    document.getElementById('tab-url').classList.toggle('active', tab==='url');
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs[0].classList.toggle('active', tab === 'cloudinary');
+    tabs[1].classList.toggle('active', tab === 'url');
+    document.getElementById('tab-cloudinary').classList.toggle('active', tab === 'cloudinary');
+    document.getElementById('tab-url').classList.toggle('active', tab === 'url');
   }
 
-  // ---- Cloudinary ----
+  // URL input — auto-detect Drive URL and show notice
+  function checkUrlType(val) {
+    const isDrive = /drive\.google\.com\/file\/d\//.test(val);
+    document.getElementById('driveNotice').classList.toggle('show', isDrive);
+  }
 
-  function cloudDragOver(e) { e.preventDefault(); document.getElementById('cloudDrop').classList.add('dragover'); }
-  function cloudDragLeave() { document.getElementById('cloudDrop').classList.remove('dragover'); }
-  function cloudDropFile(e) { e.preventDefault(); cloudDragLeave(); let f=e.dataTransfer.files[0]; if(f&&f.type.startsWith('video/')) doCloudinaryUpload(f); }
-  function uploadToCloudinary(event) { let f=event.target.files[0]; if(f) doCloudinaryUpload(f); }
+  // ═══════════════════════════════════════════════════════
+  //  CLOUDINARY UPLOAD
+  // ═══════════════════════════════════════════════════════
+  function cloudDragOver(e)  { e.preventDefault(); document.getElementById('cloudDrop').classList.add('dragover'); }
+  function cloudDragLeave()  { document.getElementById('cloudDrop').classList.remove('dragover'); }
+  function cloudDropFile(e)  {
+    e.preventDefault(); cloudDragLeave();
+    const f = e.dataTransfer.files[0];
+    if (f && f.type.startsWith('video/')) doCloudinaryUpload(f);
+  }
+  function uploadToCloudinary(event) {
+    const f = event.target.files[0];
+    if (f) doCloudinaryUpload(f);
+  }
 
   function doCloudinaryUpload(file) {
-    let cloudName = document.getElementById('cloudName').value.trim();
-    let preset = document.getElementById('uploadPreset').value.trim();
+    const cloudName = document.getElementById('cloudName').value.trim();
+    const preset    = document.getElementById('uploadPreset').value.trim();
     if (!cloudName || !preset) {
       alert('Cloud Name aur Upload Preset daalo!\n\ncloudinary.com pe free account banao\nSettings > Upload > Upload Presets > Add (Unsigned mode)');
       return;
     }
-    let prog = document.getElementById('uploadProgress');
-    let status = document.getElementById('uploadStatus');
-    let fill = document.getElementById('uploadFill');
+    const prog   = document.getElementById('uploadProgress');
+    const status = document.getElementById('uploadStatus');
+    const fill   = document.getElementById('uploadFill');
     prog.style.display = 'block';
     status.textContent = 'Uploading... 0%';
-    fill.style.width = '0%';
+    fill.style.width   = '0%';
 
-    let fd = new FormData();
+    const fd = new FormData();
     fd.append('file', file);
     fd.append('upload_preset', preset);
 
-    let xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/video/upload');
+
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
-        let pct = Math.round(e.loaded/e.total*100);
-        fill.style.width = pct+'%';
+        const pct = Math.round(e.loaded / e.total * 100);
+        fill.style.width   = pct + '%';
         status.textContent = 'Uploading... ' + pct + '%';
       }
     };
+
     xhr.onload = () => {
       if (xhr.status === 200) {
-        let res = JSON.parse(xhr.responseText);
+        const res = JSON.parse(xhr.responseText);
         status.textContent = '✅ Upload ho gaya!';
-        fill.style.width = '100%';
+        fill.style.width   = '100%';
         setVideoForRoom(res.secure_url, file.name);
         setTimeout(closeUploadModal, 1000);
       } else {
-        status.textContent = '❌ Error! Cloud name/preset check karo';
+        status.textContent    = '❌ Error! Cloud name/preset check karo';
         prog.style.background = '#2a1a1a';
       }
     };
+
     xhr.onerror = () => { status.textContent = '❌ Network error'; };
     xhr.send(fd);
   }
 
-  // ---- URL Load ----
+  // ═══════════════════════════════════════════════════════
+  //  URL LOAD  — the KEY fix for Google Drive
+  // ═══════════════════════════════════════════════════════
+
+  /**
+   * convertDriveUrl(url)
+   * --------------------
+   * If it's a Google Drive share link, return "GDRIVE:<embedUrl>"
+   * so loadVideoUrl() knows to use <iframe> instead of <video>.
+   *
+   * Drive share URL format:
+   *   https://drive.google.com/file/d/FILE_ID/view?...
+   * Embed URL format (works in iframe):
+   *   https://drive.google.com/file/d/FILE_ID/preview
+   *
+   * WHY iframe?
+   *   Google Drive sets CORS headers that block <video> src loading.
+   *   The /preview URL is an embeddable page that plays the video
+   *   inside an iframe without CORS issues.
+   */
+  function convertDriveUrl(url) {
+    const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+    if (match) {
+      const fileId   = match[1]; // extract the unique file ID
+      const embedUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
+      return 'GDRIVE:' + embedUrl; // prefix flags this as Drive mode
+    }
+    return url; // not Drive — return as-is for <video> tag
+  }
 
   function loadFromUrl() {
     let url = document.getElementById('videoUrlInput').value.trim();
     if (!url) { alert('URL daalo!'); return; }
-    url = convertDriveUrl(url);
+    url = convertDriveUrl(url);        // auto-detect & convert
     setVideoForRoom(url, 'Video');
     closeUploadModal();
   }
 
-  function convertDriveUrl(url) {
-    let match = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
-    if (match) return 'https://drive.google.com/uc?export=download&id=' + match[1];
-    return url;
-  }
-
-  // ---- Video Core ----
-
+  // ═══════════════════════════════════════════════════════
+  //  VIDEO CORE
+  // ═══════════════════════════════════════════════════════
   function setVideoForRoom(url, name) {
     socket.emit('set-video', { roomId: myRoomId, videoUrl: url, videoName: name });
     loadVideoUrl(url, name, true);
   }
 
+  /**
+   * loadVideoUrl(url, name, isOwner)
+   * ---------------------------------
+   * TWO modes:
+   *   1. GDRIVE: prefix → use <iframe> (Google Drive embed)
+   *   2. Normal URL     → use <video> tag (full sync support)
+   */
   function loadVideoUrl(url, name, isOwner) {
-    let loader = document.getElementById('loadingOverlay');
-    loader.classList.add('show');
-    video.style.display = 'block';
-    document.getElementById('placeholder').style.display = 'none';
-    video.src = url;
-    video.load();
-    video.oncanplay = () => { loader.classList.remove('show'); addSystemMsg('✅ "' + name + '" ready!'); };
-    video.onerror = () => {
-      loader.classList.remove('show');
-      addSystemMsg('❌ Video load nahi hua — URL check karo');
-      video.style.display = 'none';
-      document.getElementById('placeholder').style.display = 'flex';
-    };
-    video.onloadedmetadata = updateTime;
-    video.ontimeupdate = () => { updateTime(); updateProgress(); };
+    loadingOverlay.classList.add('show');
+    placeholder.style.display = 'none';
+
+    if (url.startsWith('GDRIVE:')) {
+      // ── DRIVE MODE ──────────────────────────────────────
+      const embedUrl = url.replace('GDRIVE:', ''); // strip our prefix
+      isDriveMode = true;
+
+      // Hide <video>, show <iframe>
+      video.style.display      = 'none';
+      driveFrame.style.display = 'block';
+      driveFrame.src           = embedUrl;
+
+      // Show Drive mode label
+      driveBanner.classList.add('show');
+
+      // Dim progress bar (can't control Drive iframe)
+      progressBarWrap.classList.add('drive-mode');
+
+      // Disable play/sync buttons (they don't work for Drive)
+      playBtn.disabled = true;
+      playBtn.title    = 'Drive mode — use iframe controls';
+      document.getElementById('syncBtn').disabled = true;
+
+      // Hide spinner once iframe loads
+      driveFrame.onload = () => {
+        loadingOverlay.classList.remove('show');
+        addSystemMsg('✅ "' + name + '" ready! (Google Drive embed)');
+        addSystemMsg('ℹ️ Drive mode: iframe ke andar play/pause karo');
+      };
+
+    } else {
+      // ── NORMAL VIDEO MODE ────────────────────────────────
+      isDriveMode = false;
+
+      // Hide <iframe>, show <video>
+      driveFrame.style.display = 'none';
+      driveFrame.src           = '';
+      driveBanner.classList.remove('show');
+      progressBarWrap.classList.remove('drive-mode');
+
+      // Re-enable buttons
+      playBtn.disabled = false;
+      playBtn.title    = '';
+      document.getElementById('syncBtn').disabled = false;
+
+      video.style.display = 'block';
+      video.src           = url;
+      video.load();
+
+      video.oncanplay = () => {
+        loadingOverlay.classList.remove('show');
+        addSystemMsg('✅ "' + name + '" ready!');
+      };
+
+      video.onerror = () => {
+        loadingOverlay.classList.remove('show');
+        addSystemMsg('❌ Video load nahi hua — URL check karo');
+        video.style.display = 'none';
+        placeholder.style.display = 'flex';
+      };
+
+      video.onloadedmetadata = updateTime;
+      video.ontimeupdate = () => { updateTime(); updateProgress(); };
+    }
   }
 
-  function handleVideoClick(e) { if (e.target === video) togglePlay(); }
+  function handleVideoClick(e) {
+    if (e.target === video) togglePlay(); // only fire for <video> clicks
+  }
 
   function togglePlay() {
+    if (isDriveMode) {
+      addSystemMsg('ℹ️ Drive mode: iframe ke andar play/pause karo'); return;
+    }
     if (!video.src || video.src === window.location.href) { openUploadModal(); return; }
+
     if (video.paused) {
-      video.play().catch(()=>{});
+      video.play().catch(() => {});
       if (!isSyncing) socket.emit('video-play', { roomId: myRoomId, currentTime: video.currentTime });
       updatePlayBtn(true);
     } else {
@@ -471,53 +692,122 @@
   }
 
   function seekVideo(e) {
-    if (!video.duration) return;
-    let rect = e.currentTarget.getBoundingClientRect();
+    if (isDriveMode || !video.duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
     video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
     if (!isSyncing) socket.emit('video-seek', { roomId: myRoomId, currentTime: video.currentTime });
   }
 
-  function requestSync() { socket.emit('request-sync', { roomId: myRoomId }); addSystemMsg('🔄 Sync maanga...'); }
-  function updatePlayBtn(p) { document.getElementById('playBtn').textContent = p ? '⏸ Pause' : '▶ Play'; }
-  function updateProgress() { if (video.duration) document.getElementById('progressFill').style.width = (video.currentTime/video.duration*100)+'%'; }
-  function updateTime() { document.getElementById('timeDisplay').textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration||0); }
-  function formatTime(s) { if (!s||isNaN(s)) return '0:00'; let m=Math.floor(s/60),sec=Math.floor(s%60); return m+':'+(sec<10?'0':'')+sec; }
+  function requestSync() {
+    if (isDriveMode) { addSystemMsg('ℹ️ Drive mode: sync nahi hoga'); return; }
+    socket.emit('request-sync', { roomId: myRoomId });
+    addSystemMsg('🔄 Sync maanga...');
+  }
 
-  // ---- Reactions ----
+  function updatePlayBtn(playing) {
+    playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
+  }
 
-  function sendReaction(emoji) { socket.emit('reaction', { roomId: myRoomId, emoji, userName: myName }); showFloatingReaction(emoji); }
+  function updateProgress() {
+    if (video.duration)
+      document.getElementById('progressFill').style.width =
+        (video.currentTime / video.duration * 100) + '%';
+  }
+
+  function updateTime() {
+    document.getElementById('timeDisplay').textContent =
+      formatTime(video.currentTime) + ' / ' + formatTime(video.duration || 0);
+  }
+
+  function formatTime(s) {
+    if (!s || isNaN(s)) return '0:00';
+    const m   = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  // ═══════════════════════════════════════════════════════
+  //  REACTIONS
+  // ═══════════════════════════════════════════════════════
+  function sendReaction(emoji) {
+    socket.emit('reaction', { roomId: myRoomId, emoji, userName: myName });
+    showFloatingReaction(emoji);
+  }
+
   function showFloatingReaction(emoji) {
-    let el = document.createElement('div'); el.className = 'reaction-float'; el.textContent = emoji;
-    let c = document.getElementById('videoContainer');
-    el.style.left = (20 + Math.random()*(c.offsetWidth-80))+'px'; el.style.bottom = '60px';
-    c.appendChild(el); setTimeout(() => el.remove(), 2100);
+    const el = document.createElement('div');
+    el.className   = 'reaction-float';
+    el.textContent = emoji;
+    const c = document.getElementById('videoContainer');
+    el.style.left   = (20 + Math.random() * (c.offsetWidth - 80)) + 'px';
+    el.style.bottom = '60px';
+    c.appendChild(el);
+    setTimeout(() => el.remove(), 2100);
   }
 
-  // ---- Chat ----
-
+  // ═══════════════════════════════════════════════════════
+  //  CHAT
+  // ═══════════════════════════════════════════════════════
   function sendMessage() {
-    let inp = document.getElementById('chatInput'); let text = inp.value.trim(); if (!text) return;
+    const inp  = document.getElementById('chatInput');
+    const text = inp.value.trim();
+    if (!text) return;
     socket.emit('chat-message', { roomId: myRoomId, message: text, userName: myName });
-    inp.value = ''; inp.style.height = 'auto';
+    inp.value      = '';
+    inp.style.height = 'auto';
   }
-  function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); } }
-  function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 80) + 'px';
+  }
 
   function addMsg(name, type, text, time) {
-    let t = time || new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
-    let div = document.createElement('div'); div.className = 'msg';
-    div.innerHTML = '<div class="avatar '+type+'">'+name.substring(0,2).toUpperCase()+'</div><div class="msg-body"><div class="msg-name">'+name+'</div><div class="msg-text">'+escapeHtml(text)+'</div><div class="msg-time">'+t+'</div></div>';
-    let list = document.getElementById('messageList'); list.appendChild(div); list.scrollTop = list.scrollHeight;
+    const t   = time || new Date().toLocaleTimeString('en', { hour:'2-digit', minute:'2-digit' });
+    const div = document.createElement('div');
+    div.className = 'msg';
+    div.innerHTML =
+      '<div class="avatar ' + type + '">' + name.substring(0, 2).toUpperCase() + '</div>' +
+      '<div class="msg-body">' +
+        '<div class="msg-name">'  + name          + '</div>' +
+        '<div class="msg-text">'  + escapeHtml(text) + '</div>' +
+        '<div class="msg-time">'  + t             + '</div>' +
+      '</div>';
+    const list = document.getElementById('messageList');
+    list.appendChild(div);
+    list.scrollTop = list.scrollHeight;
   }
-  function addSystemMsg(text) {
-    let div = document.createElement('div'); div.className = 'system-msg'; div.textContent = text;
-    let list = document.getElementById('messageList'); list.appendChild(div); list.scrollTop = list.scrollHeight;
-  }
-  function updateOnlineCount(n) { document.getElementById('onlineCount').textContent = n; }
-  function escapeHtml(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  document.getElementById('nameInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('roomInput').focus(); });
-  document.getElementById('roomInput').addEventListener('keydown', e => { if(e.key==='Enter') joinRoom(); });
+  function addSystemMsg(text) {
+    const div = document.createElement('div');
+    div.className   = 'system-msg';
+    div.textContent = text;
+    const list = document.getElementById('messageList');
+    list.appendChild(div);
+    list.scrollTop = list.scrollHeight;
+  }
+
+  function updateOnlineCount(n) {
+    document.getElementById('onlineCount').textContent = n;
+  }
+
+  function escapeHtml(t) {
+    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ═══════════════════════════════════════════════════════
+  //  KEYBOARD SHORTCUTS on JOIN SCREEN
+  // ═══════════════════════════════════════════════════════
+  document.getElementById('nameInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('roomInput').focus();
+  });
+  document.getElementById('roomInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') joinRoom();
+  });
 </script>
 </body>
 </html>
