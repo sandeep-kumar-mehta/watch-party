@@ -471,21 +471,24 @@
 
   // ===== SOCKET EVENTS =====
 
-  socket.on('user-joined', ({ userName, users, videoState }) => {
+  // FIX 1: Jab TUM join karo — apna confirmation
+  socket.on('join-confirmed', ({ users, videoName }) => {
     updateOnlineCount(users.length);
-    addSystemMsg('🟢 ' + userName + ' room mein aa gaya!');
-    // Sync video state if needed
-    if (videoState && video.src) {
-      isSyncing = true;
-      video.currentTime = videoState.time;
-      if (videoState.isPlaying) video.play(); else video.pause();
-      setTimeout(() => isSyncing = false, 500);
+    addSystemMsg('✅ Room join ho gaya! ' + users.length + ' log online hain');
+    if (videoName) {
+      addSystemMsg('ℹ️ Dost ne "' + videoName + '" load kiya hua hai — tum bhi same file load karo');
     }
+  });
+
+  // FIX 2: Jab DOST join kare — tumhe dikhe
+  socket.on('user-joined', ({ userName, users }) => {
+    updateOnlineCount(users.length);
+    addSystemMsg('🟢 ' + userName + ' room mein aa gaya! (' + users.length + ' online)');
   });
 
   socket.on('user-left', ({ userName, users }) => {
     updateOnlineCount(users.length);
-    addSystemMsg('🔴 ' + userName + ' chala gaya');
+    addSystemMsg('🔴 ' + userName + ' chala gaya (' + users.length + ' online)');
   });
 
   socket.on('chat-message', ({ userName, message, time }) => {
@@ -498,10 +501,20 @@
     addSystemMsg(userName + ' ne react kiya: ' + emoji);
   });
 
+  // FIX 3: Dost ne video load kiya — tumhe batao
+  socket.on('video-loaded', ({ userName, videoName }) => {
+    if (userName !== myName) {
+      addSystemMsg('📂 ' + userName + ' ne "' + videoName + '" load kiya — tum bhi same file load karo!');
+      // Placeholder text update karo
+      let ph = document.getElementById('placeholder');
+      if (ph) ph.querySelector('p').innerHTML = '⬆️ <b>' + userName + '</b> ne "' + videoName + '" load kiya<br>Tum bhi same file load karo!';
+    }
+  });
+
   socket.on('video-play', ({ currentTime, userName }) => {
     isSyncing = true;
     video.currentTime = currentTime;
-    video.play();
+    video.play().catch(() => {});
     updatePlayBtn(true);
     addSystemMsg('▶ ' + userName + ' ne play kiya');
     setTimeout(() => isSyncing = false, 500);
@@ -526,7 +539,7 @@
   socket.on('sync-state', ({ time, isPlaying }) => {
     isSyncing = true;
     video.currentTime = time;
-    if (isPlaying) video.play(); else video.pause();
+    if (isPlaying) video.play().catch(() => {}); else video.pause();
     updatePlayBtn(isPlaying);
     addSystemMsg('✅ Sync ho gaya ' + formatTime(time) + ' pe!');
     setTimeout(() => isSyncing = false, 500);
@@ -534,28 +547,25 @@
 
   // ===== VIDEO FUNCTIONS =====
 
-  function loadVideo(event) {
-    let file = event.target.files[0];
-    if (!file) return;
+  function setupVideo(file) {
     video.src = URL.createObjectURL(file);
     video.style.display = 'block';
     document.getElementById('placeholder').style.display = 'none';
     video.onloadedmetadata = updateTime;
     video.ontimeupdate = () => { updateTime(); updateProgress(); };
-    addSystemMsg('📂 Video load hua: ' + file.name);
+    addSystemMsg('📂 "' + file.name + '" load ho gaya!');
+    socket.emit('video-loaded', { roomId: myRoomId, videoName: file.name });
+  }
+
+  function loadVideo(event) {
+    let file = event.target.files[0];
+    if (file) setupVideo(file);
   }
 
   function handleDrop(e) {
     e.preventDefault();
     let file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('video/')) {
-      video.src = URL.createObjectURL(file);
-      video.style.display = 'block';
-      document.getElementById('placeholder').style.display = 'none';
-      video.onloadedmetadata = updateTime;
-      video.ontimeupdate = () => { updateTime(); updateProgress(); };
-      addSystemMsg('📂 Video drop hua: ' + file.name);
-    }
+    if (file && file.type.startsWith('video/')) setupVideo(file);
   }
 
   function handleVideoClick(e) {
