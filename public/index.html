@@ -15,6 +15,74 @@
       overflow: hidden;
     }
 
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      body { overflow: auto; height: auto; }
+
+      /* Join screen - phone pe full width */
+      .join-card {
+        width: 92%;
+        padding: 28px 20px;
+        margin: 20px auto;
+      }
+
+      /* Main app - vertical layout */
+      #appScreen {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .main-area {
+        flex-direction: column;
+        height: auto;
+      }
+
+      /* Video area full width */
+      .video-area { width: 100%; }
+
+      .video-container {
+        height: 220px; /* phone pe fixed height */
+      }
+
+      /* Topbar compact */
+      .topbar { padding: 8px 12px; gap: 8px; }
+      .topbar h2 { font-size: 14px; }
+      .room-badge { font-size: 11px; padding: 3px 10px; }
+      .online-pill { font-size: 11px; padding: 3px 8px; }
+
+      /* Controls ek line mein */
+      .controls {
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 8px 10px;
+      }
+      .ctrl-btn { padding: 6px 10px; font-size: 12px; }
+      .time-info { width: 100%; text-align: center; margin: 0; }
+
+      /* Reactions compact */
+      .reactions-bar { padding: 6px 10px; gap: 6px; }
+      .react-btn { padding: 4px 10px; font-size: 15px; }
+
+      /* Chat panel - bottom mein full width */
+      .chat-panel {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #2a2a3a;
+        height: 350px; /* fixed height scroll */
+      }
+
+      /* Progress bar */
+      .progress-bar-wrap { padding: 6px 10px 4px; }
+    }
+
+    /* Very small phones */
+    @media (max-width: 380px) {
+      .join-card h1 { font-size: 22px; }
+      .video-container { height: 180px; }
+      .ctrl-btn { font-size: 11px; padding: 5px 8px; }
+    }
+
     /* ===== JOIN SCREEN ===== */
     #joinScreen {
       display: flex;
