@@ -3,471 +3,599 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Watch Party 🎬</title>
+  <title>CineSync 🎬</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* ════════════════════════════════════════
-       RESET & BASE
-    ════════════════════════════════════════ */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e8e8f0; overflow-x: hidden; }
+/* ════════════════════════════════════════
+   CSS VARIABLES & RESET
+════════════════════════════════════════ */
+:root {
+  --bg:        #08080f;
+  --surface:   #0f0f1a;
+  --surface2:  #161624;
+  --surface3:  #1d1d2e;
+  --border:    #ffffff0f;
+  --border2:   #ffffff18;
+  --accent:    #7c5cfc;
+  --accent2:   #5c3de0;
+  --accent-g:  linear-gradient(135deg, #7c5cfc, #b45cfc);
+  --green:     #3ddc84;
+  --red:       #ff5c5c;
+  --text:      #f0f0ff;
+  --text2:     #9090b0;
+  --text3:     #50506a;
+  --radius:    12px;
+  --chat-w:    300px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
-    /* ════════════════════════════════════════
-       JOIN SCREEN
-    ════════════════════════════════════════ */
-    #joinScreen {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 20px;
-    }
-    .join-card {
-      background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 16px;
-      padding: 36px 28px; width: 100%; max-width: 380px; text-align: center;
-    }
-    .join-card h1 { font-size: 26px; margin-bottom: 6px; }
-    .join-card > p { color: #888; font-size: 13px; margin-bottom: 24px; }
-    .join-card input {
-      width: 100%; padding: 11px 14px; background: #252535; border: 1px solid #333;
-      border-radius: 10px; color: #fff; font-size: 14px; margin-bottom: 10px; outline: none;
-    }
-    .join-card input:focus { border-color: #6c63ff; }
-    .btn-primary {
-      width: 100%; padding: 12px; background: #6c63ff; color: white; border: none;
-      border-radius: 10px; font-size: 14px; cursor: pointer; font-weight: 500; margin-bottom: 8px;
-    }
-    .btn-primary:hover { background: #5a52e0; }
-    .btn-secondary {
-      width: 100%; padding: 11px; background: #252535; color: #ccc;
-      border: 1px solid #333; border-radius: 10px; font-size: 14px; cursor: pointer;
-    }
-    .btn-secondary:hover { background: #2e2e45; }
-    .divider { margin: 14px 0; color: #444; font-size: 12px; }
+/* ════════════════════════════════════════
+   JOIN SCREEN
+════════════════════════════════════════ */
+#joinScreen {
+  display: flex; align-items: center; justify-content: center;
+  min-height: 100vh; padding: 20px;
+  background: radial-gradient(ellipse at 30% 20%, #1a0a3a 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 80%, #0a1a3a 0%, transparent 60%),
+              var(--bg);
+}
+.join-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 40px 32px;
+  width: 100%; max-width: 400px;
+  position: relative; overflow: hidden;
+}
+.join-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--accent-g);
+}
+.join-logo {
+  font-size: 28px; font-weight: 800; letter-spacing: -1px;
+  margin-bottom: 6px;
+}
+.join-logo span { background: var(--accent-g); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.join-sub { color: var(--text2); font-size: 13px; margin-bottom: 28px; }
+.form-group { margin-bottom: 12px; }
+.form-label { font-size: 11px; font-weight: 600; letter-spacing: .5px; color: var(--text3); text-transform: uppercase; margin-bottom: 6px; display: block; }
+.form-input {
+  width: 100%; padding: 12px 14px;
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text); font-size: 14px; outline: none;
+  transition: border-color .2s;
+}
+.form-input:focus { border-color: var(--accent); }
+.form-input::placeholder { color: var(--text3); }
+.btn-join {
+  width: 100%; padding: 13px; margin-top: 4px;
+  background: var(--accent-g); color: #fff; border: none;
+  border-radius: var(--radius); font-size: 14px; font-weight: 700;
+  letter-spacing: .3px; transition: opacity .2s, transform .1s;
+}
+.btn-join:hover { opacity: .9; transform: translateY(-1px); }
+.btn-join:active { transform: translateY(0); }
+.divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; color: var(--text3); font-size: 12px; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.btn-create {
+  width: 100%; padding: 12px;
+  background: var(--surface3); border: 1px solid var(--border2);
+  border-radius: var(--radius); color: var(--text2); font-size: 14px; font-weight: 600;
+  transition: background .2s, border-color .2s;
+}
+.btn-create:hover { background: var(--surface2); border-color: var(--accent); color: var(--text); }
+.join-footer { text-align: center; margin-top: 16px; font-size: 11px; color: var(--text3); }
 
-    /* ════════════════════════════════════════
-       APP SCREEN
-    ════════════════════════════════════════ */
-    #appScreen { display: none; flex-direction: column; min-height: 100vh; }
+/* ════════════════════════════════════════
+   APP SHELL
+════════════════════════════════════════ */
+#appScreen { display: none; flex-direction: column; height: 100vh; }
 
-    /* ── TOPBAR ── */
-    .topbar {
-      padding: 10px 16px; background: #1a1a24; border-bottom: 1px solid #2a2a3a;
-      display: flex; align-items: center; gap: 10px;
-      position: sticky; top: 0; z-index: 20;
-    }
-    .topbar h2 { font-size: 15px; font-weight: 600; white-space: nowrap; }
-    .room-badge {
-      background: #252535; border: 1px solid #333; border-radius: 20px;
-      padding: 4px 12px; font-size: 12px; color: #aaa; cursor: pointer;
-    }
-    .room-badge span { color: #6c63ff; font-weight: 600; }
-    .online-pill {
-      margin-left: auto; background: #1a3a1a; color: #4caf50;
-      border-radius: 20px; padding: 4px 10px; font-size: 12px; white-space: nowrap;
-    }
-    .live-dot {
-      width: 7px; height: 7px; background: #4caf50; border-radius: 50%;
-      display: inline-block; margin-right: 4px; animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+/* ── TOPBAR ─────────────────────────────── */
+.topbar {
+  height: 52px; padding: 0 16px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  position: sticky; top: 0; z-index: 30; flex-shrink: 0;
+}
+.topbar-logo { font-size: 15px; font-weight: 800; letter-spacing: -0.5px; margin-right: 4px; }
+.topbar-logo span { color: var(--accent); }
+.room-chip {
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer;
+  font-family: 'Space Mono', monospace; font-weight: 700; color: var(--text2);
+  transition: border-color .2s;
+}
+.room-chip:hover { border-color: var(--accent); color: var(--text); }
+.room-chip b { color: var(--accent); }
+.online-pill {
+  display: flex; align-items: center; gap: 5px;
+  background: #0a2a15; color: var(--green);
+  border-radius: 20px; padding: 4px 10px; font-size: 12px; font-weight: 600;
+  margin-left: auto;
+}
+.live-dot {
+  width: 6px; height: 6px; background: var(--green); border-radius: 50%;
+  animation: pulse 1.5s ease infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
 
-    /* Chat toggle button — shows on mobile, hidden on desktop */
-    .chat-toggle-btn {
-      display: none; background: #252535; border: 1px solid #333; border-radius: 8px;
-      padding: 6px 10px; color: #ccc; font-size: 13px; cursor: pointer;
-      position: relative; flex-shrink: 0;
-    }
-    /* Notification badge on chat button */
-    .notif-badge {
-      position: absolute; top: -6px; right: -6px;
-      background: #ff4545; color: #fff; border-radius: 50%;
-      width: 18px; height: 18px; font-size: 10px; font-weight: 700;
-      display: none; align-items: center; justify-content: center;
-      border: 2px solid #0f0f13;
-    }
-    .notif-badge.show { display: flex; }
+.chat-toggle-btn {
+  display: none; align-items: center; gap: 5px;
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 6px 11px;
+  color: var(--text2); font-size: 12px; font-weight: 600;
+  position: relative; flex-shrink: 0; transition: border-color .2s;
+}
+.chat-toggle-btn:hover { border-color: var(--accent); color: var(--text); }
+.notif-badge {
+  position: absolute; top: -7px; right: -7px;
+  background: var(--red); color: #fff; border-radius: 50%;
+  width: 18px; height: 18px; font-size: 10px; font-weight: 700;
+  display: none; align-items: center; justify-content: center;
+  border: 2px solid var(--bg); font-family: 'Space Mono', monospace;
+}
+.notif-badge.show { display: flex; }
 
-    /* ── MAIN AREA ── */
-    .main-area { display: flex; flex: 1; }
-    .video-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+/* ── MAIN LAYOUT ────────────────────────── */
+.main-area { display: flex; flex: 1; overflow: hidden; }
+.video-area { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 
-    /* ════════════════════════════════════════
-       UPLOAD MODAL
-    ════════════════════════════════════════ */
-    .upload-overlay {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8); z-index: 200; align-items: center;
-      justify-content: center; padding: 16px;
-    }
-    .upload-overlay.show { display: flex; }
-    .upload-modal {
-      background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 16px;
-      padding: 24px; width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto;
-    }
-    .upload-modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-    .upload-modal > p { font-size: 12px; color: #888; margin-bottom: 16px; }
-    .upload-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
-    .tab-btn {
-      flex: 1; padding: 9px; background: #252535; border: 1px solid #333;
-      border-radius: 8px; color: #aaa; font-size: 13px; cursor: pointer;
-    }
-    .tab-btn.active { background: #6c63ff; border-color: #6c63ff; color: #fff; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .cloud-drop {
-      border: 2px dashed #333; border-radius: 12px; padding: 28px 20px;
-      text-align: center; cursor: pointer; margin-bottom: 12px;
-    }
-    .cloud-drop:hover, .cloud-drop.dragover { border-color: #6c63ff; background: #1e1e30; }
-    .cloud-drop .icon { font-size: 30px; margin-bottom: 8px; }
-    .cloud-drop p { font-size: 13px; color: #888; }
-    .cloud-drop p span { color: #6c63ff; }
-    .progress-upload { display: none; background: #252535; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
-    .progress-upload p { font-size: 12px; color: #aaa; margin-bottom: 8px; }
-    .progress-upload-bar { height: 6px; background: #333; border-radius: 3px; }
-    .progress-upload-fill { height: 100%; background: #6c63ff; border-radius: 3px; width: 0%; transition: width 0.3s; }
-    .config-row { display: flex; gap: 8px; margin-bottom: 12px; }
-    .config-row > div { flex: 1; }
-    .config-row label { font-size: 11px; color: #888; display: block; margin-bottom: 4px; }
-    .config-row input {
-      width: 100%; padding: 8px 10px; background: #252535; border: 1px solid #333;
-      border-radius: 8px; color: #fff; font-size: 13px; outline: none;
-    }
-    .config-row input:focus { border-color: #6c63ff; }
-    .hint-box {
-      background: #1e1e2e; border-radius: 8px; padding: 12px;
-      font-size: 11px; color: #666; margin-bottom: 12px; line-height: 1.6;
-    }
-    .hint-box b { color: #aaa; }
-    .hint-box a { color: #6c63ff; }
-    .url-input-wrap { margin-bottom: 12px; }
-    .url-input-wrap label { font-size: 12px; color: #888; display: block; margin-bottom: 6px; }
-    .url-input-wrap input {
-      width: 100%; padding: 10px 12px; background: #252535; border: 1px solid #333;
-      border-radius: 8px; color: #fff; font-size: 13px; outline: none;
-    }
-    .url-input-wrap input:focus { border-color: #6c63ff; }
-    .drive-notice {
-      background: #1a2a1a; border: 1px solid #2a4a2a; border-radius: 8px;
-      padding: 10px 12px; font-size: 11px; color: #7fc97f;
-      margin-bottom: 10px; line-height: 1.6; display: none;
-    }
-    .drive-notice.show { display: block; }
-    .modal-close {
-      width: 100%; padding: 10px; background: none; border: 1px solid #333;
-      border-radius: 8px; color: #888; font-size: 13px; cursor: pointer; margin-top: 4px;
-    }
-    .modal-close:hover { background: #252535; }
+/* ════════════════════════════════════════
+   UPLOAD MODAL
+════════════════════════════════════════ */
+.upload-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.75); backdrop-filter: blur(6px);
+  z-index: 200; align-items: center; justify-content: center; padding: 16px;
+}
+.upload-overlay.show { display: flex; }
+.upload-modal {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 28px 24px;
+  width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto;
+}
+.upload-modal h3 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+.upload-modal > p { font-size: 12px; color: var(--text2); margin-bottom: 18px; }
+.upload-tabs { display: flex; gap: 6px; margin-bottom: 18px; }
+.tab-btn {
+  flex: 1; padding: 9px 6px;
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text2); font-size: 12px; font-weight: 600;
+  transition: all .2s;
+}
+.tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.cloud-drop {
+  border: 2px dashed var(--border2); border-radius: var(--radius);
+  padding: 30px 20px; text-align: center; cursor: pointer; margin-bottom: 12px;
+  transition: border-color .2s, background .2s;
+}
+.cloud-drop:hover, .cloud-drop.dragover { border-color: var(--accent); background: #1a1230; }
+.cloud-drop .drop-icon { font-size: 32px; margin-bottom: 8px; }
+.cloud-drop p { font-size: 13px; color: var(--text2); }
+.cloud-drop p span { color: var(--accent); }
+.progress-upload { display: none; background: var(--surface3); border-radius: var(--radius); padding: 14px; margin-bottom: 12px; }
+.progress-upload p { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+.progress-upload-bar { height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-upload-fill { height: 100%; background: var(--accent-g); width: 0%; transition: width .3s; border-radius: 3px; }
+.config-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.config-row > div { flex: 1; }
+.config-row label { font-size: 11px; color: var(--text3); display: block; margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+.config-row input {
+  width: 100%; padding: 9px 11px; background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text); font-size: 13px; outline: none;
+}
+.config-row input:focus { border-color: var(--accent); }
+.hint-box {
+  background: var(--surface2); border-left: 3px solid var(--accent);
+  border-radius: 8px; padding: 12px 14px; font-size: 11px;
+  color: var(--text2); margin-bottom: 12px; line-height: 1.7;
+}
+.hint-box b { color: var(--text); }
+.hint-box a { color: var(--accent); }
+.url-input-wrap { margin-bottom: 12px; }
+.url-input-wrap label { font-size: 11px; color: var(--text3); display: block; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+.url-input-wrap input {
+  width: 100%; padding: 11px 13px; background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text); font-size: 13px; outline: none;
+}
+.url-input-wrap input:focus { border-color: var(--accent); }
+.drive-notice {
+  background: #0a2a15; border: 1px solid #1a5a30;
+  border-radius: var(--radius); padding: 10px 14px; font-size: 11px;
+  color: #5adf94; margin-bottom: 10px; line-height: 1.7; display: none;
+}
+.drive-notice.show { display: block; }
+.btn-load {
+  width: 100%; padding: 12px; background: var(--accent-g); color: #fff; border: none;
+  border-radius: var(--radius); font-size: 14px; font-weight: 700; margin-bottom: 8px;
+}
+.btn-load:hover { opacity: .9; }
+.modal-close {
+  width: 100%; padding: 10px; background: none; border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text2); font-size: 13px; font-weight: 600;
+  margin-top: 4px;
+}
+.modal-close:hover { background: var(--surface3); }
 
-    /* ════════════════════════════════════════
-       VIDEO CONTAINER
-    ════════════════════════════════════════ */
-    .video-container {
-      flex: 1; background: #000; position: relative;
-      display: flex; align-items: center; justify-content: center; min-height: 260px;
-    }
-    #mainVideo { width: 100%; height: 100%; object-fit: contain; display: none; }
-    #driveFrame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; display: none; }
+/* ════════════════════════════════════════
+   VIDEO CONTAINER
+════════════════════════════════════════ */
+.video-container {
+  flex: 1; background: #000; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 220px; overflow: hidden;
+}
+#mainVideo { width: 100%; height: 100%; object-fit: contain; display: none; }
+#driveFrame { position: absolute; inset: 0; width: 100%; height: 100%; border: none; display: none; }
 
-    .drive-banner {
-      display: none; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
-      background: rgba(108,99,255,0.85); color: #fff; font-size: 11px;
-      padding: 4px 14px; border-radius: 20px; z-index: 5; white-space: nowrap; pointer-events: none;
-    }
-    .drive-banner.show { display: block; }
+.drive-banner {
+  display: none; position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  background: rgba(124,92,252,.85); color: #fff; font-size: 11px; font-weight: 600;
+  padding: 5px 16px; border-radius: 20px; z-index: 5; white-space: nowrap;
+  pointer-events: none; backdrop-filter: blur(4px);
+}
+.drive-banner.show { display: block; }
 
-    .video-placeholder {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 12px; color: #555; padding: 20px; text-align: center;
-    }
-    .video-placeholder .icon {
-      width: 68px; height: 68px; background: #1a1a24; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; border: 1px solid #2a2a3a;
-    }
-    .video-placeholder p { font-size: 13px; line-height: 1.6; }
-    .video-placeholder button {
-      background: #6c63ff; color: white; border: none;
-      border-radius: 8px; padding: 10px 20px; font-size: 13px; cursor: pointer;
-    }
-    .reaction-float {
-      position: absolute; font-size: 28px; pointer-events: none;
-      animation: floatUp 2s ease forwards;
-    }
-    @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-120px) scale(1.4)} }
-    .loading-overlay {
-      display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7); align-items: center; justify-content: center;
-      flex-direction: column; gap: 12px; z-index: 3;
-    }
-    .loading-overlay.show { display: flex; }
-    .spinner {
-      width: 38px; height: 38px; border: 3px solid #333;
-      border-top-color: #6c63ff; border-radius: 50%; animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+.video-placeholder {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 14px; color: var(--text3); padding: 24px; text-align: center;
+}
+.video-placeholder .ph-icon {
+  width: 72px; height: 72px; background: var(--surface2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; border: 1px solid var(--border);
+}
+.video-placeholder h3 { font-size: 16px; font-weight: 700; color: var(--text2); }
+.video-placeholder p { font-size: 13px; color: var(--text3); max-width: 240px; line-height: 1.6; }
+.btn-add-video {
+  background: var(--accent); color: white; border: none;
+  border-radius: var(--radius); padding: 10px 22px; font-size: 13px; font-weight: 700;
+}
+.btn-add-video:hover { background: var(--accent2); }
 
-    /* ─── PROGRESS BAR ─── */
-    .progress-bar-wrap { padding: 7px 14px 4px; background: #151520; }
-    .progress-bar { height: 5px; background: #2a2a3a; border-radius: 3px; cursor: pointer; }
-    .progress-fill { height: 100%; background: #6c63ff; border-radius: 3px; width: 0%; pointer-events: none; }
-    .progress-bar-wrap.drive-mode { opacity: 0.25; pointer-events: none; }
+.loading-overlay {
+  display: none; position: absolute; inset: 0;
+  background: rgba(0,0,0,.7); align-items: center; justify-content: center;
+  flex-direction: column; gap: 12px; z-index: 3;
+}
+.loading-overlay.show { display: flex; }
+.spinner {
+  width: 36px; height: 36px; border: 3px solid var(--border);
+  border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ─── CONTROLS ─── */
-    .controls {
-      padding: 8px 14px; background: #151520; border-top: 1px solid #1e1e2e;
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
-    .ctrl-btn {
-      background: #252535; border: 1px solid #333; border-radius: 8px;
-      padding: 7px 12px; color: #ccc; font-size: 12px; cursor: pointer;
-      display: flex; align-items: center; gap: 5px;
-    }
-    .ctrl-btn:hover { background: #2e2e45; color: #fff; }
-    .ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    .time-info { font-size: 12px; color: #666; margin-left: auto; font-variant-numeric: tabular-nums; }
+/* Reactions float */
+.reaction-float {
+  position: absolute; font-size: 28px; pointer-events: none;
+  animation: floatUp 2.2s ease forwards;
+}
+@keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-130px) scale(1.5)} }
 
-    /* ─── REACTIONS BAR ─── */
-    .reactions-bar {
-      display: flex; gap: 6px; padding: 7px 14px; background: #151520;
-      border-top: 1px solid #1e1e2e; flex-wrap: wrap; align-items: center;
-    }
-    .react-btn {
-      background: #1e1e2e; border: 1px solid #2a2a3a;
-      border-radius: 20px; padding: 4px 12px; font-size: 15px; cursor: pointer;
-    }
-    .react-btn:hover { transform: scale(1.2); }
+/* ── PROGRESS BAR ──────────────────────── */
+.progress-bar-wrap { padding: 8px 14px 4px; background: var(--surface2); flex-shrink: 0; }
+.progress-bar { height: 4px; background: var(--border2); border-radius: 2px; cursor: pointer; position: relative; }
+.progress-bar:hover { height: 6px; margin-top: -1px; }
+.progress-fill { height: 100%; background: var(--accent-g); border-radius: 2px; width: 0%; pointer-events: none; transition: width .1s; }
+.progress-bar-wrap.drive-mode { opacity: .2; pointer-events: none; }
 
-    /* ════════════════════════════════════════
-       CHAT PANEL — portrait (sidebar)
-    ════════════════════════════════════════ */
-    .chat-panel {
-      width: 280px; border-left: 1px solid #2a2a3a;
-      display: flex; flex-direction: column; background: #13131e;
-      transition: transform 0.3s ease;
-    }
-    .chat-title {
-      padding: 11px 14px; border-bottom: 1px solid #2a2a3a;
-      font-size: 13px; font-weight: 500; color: #aaa;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    /* Unread dot inside panel title */
-    .chat-title-badge {
-      background: #ff4545; color: #fff; border-radius: 12px;
-      padding: 1px 7px; font-size: 10px; font-weight: 700; display: none;
-    }
-    .chat-title-badge.show { display: inline-block; }
+/* ── CONTROLS ──────────────────────────── */
+.controls {
+  padding: 8px 12px; background: var(--surface2); border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 7px; flex-wrap: wrap; flex-shrink: 0;
+}
+.ctrl-btn {
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 7px 13px; color: var(--text2);
+  font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 5px;
+  transition: all .2s;
+}
+.ctrl-btn:hover { background: var(--surface); border-color: var(--border2); color: var(--text); }
+.ctrl-btn:disabled { opacity: .3; cursor: not-allowed; }
+.ctrl-btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ctrl-btn.primary:hover { background: var(--accent2); }
+.time-info { font-size: 11px; color: var(--text3); margin-left: auto; font-family: 'Space Mono', monospace; }
 
-    .messages {
-      flex: 1; overflow-y: auto; padding: 10px;
-      display: flex; flex-direction: column; gap: 9px;
-      scrollbar-width: thin; scrollbar-color: #2a2a3a transparent;
-    }
-    .msg { display: flex; gap: 8px; animation: fadeIn 0.2s ease; }
-    @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
-    .avatar {
-      width: 28px; height: 28px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 600; flex-shrink: 0;
-    }
-    .avatar.me     { background: #2d2060; color: #9d8fff; }
-    .avatar.other  { background: #1e3a20; color: #6fcf97; }
-    .msg-body { flex: 1; min-width: 0; }
-    .msg-name  { font-size: 11px; color: #666; margin-bottom: 2px; }
-    .msg-text  { font-size: 13px; color: #ddd; line-height: 1.4; word-break: break-word; }
-    .msg-time  { font-size: 10px; color: #444; margin-top: 2px; }
-    .system-msg { font-size: 11px; color: #555; text-align: center; padding: 3px 0; font-style: italic; }
+/* ── REACTIONS BAR ──────────────────────── */
+.reactions-bar {
+  display: flex; gap: 5px; padding: 6px 12px;
+  background: var(--surface2); border-top: 1px solid var(--border);
+  flex-wrap: wrap; align-items: center; flex-shrink: 0;
+}
+.react-btn {
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 11px; font-size: 15px;
+  transition: transform .15s, border-color .15s;
+}
+.react-btn:hover { transform: scale(1.25); border-color: var(--border2); }
 
-    .chat-input-wrap {
-      padding: 9px; border-top: 1px solid #2a2a3a; display: flex; gap: 7px;
-    }
-    .chat-input {
-      flex: 1; padding: 8px 11px; background: #1e1e2e; border: 1px solid #2a2a3a;
-      border-radius: 18px; color: #eee; font-size: 13px; outline: none;
-      font-family: inherit; resize: none; max-height: 80px; line-height: 1.4;
-    }
-    .chat-input:focus { border-color: #6c63ff; }
-    .send-btn {
-      background: #6c63ff; border: none; border-radius: 50%;
-      width: 34px; height: 34px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; align-self: flex-end;
-    }
-    .send-btn:hover { background: #5a52e0; }
+/* ════════════════════════════════════════
+   CHAT PANEL — full redesign
+════════════════════════════════════════ */
+.chat-panel {
+  width: var(--chat-w); border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; background: var(--surface);
+  flex-shrink: 0; overflow: hidden;
+}
 
-    /* ════════════════════════════════════════
-       CHAT NOTIFICATION TOAST
-       (pops at top-right when chat is hidden)
-    ════════════════════════════════════════ */
-    .chat-toast {
-      position: fixed; top: 60px; right: 12px; z-index: 300;
-      background: #1e1e2e; border: 1px solid #6c63ff; border-radius: 12px;
-      padding: 10px 14px; max-width: 240px; font-size: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
-      display: none; flex-direction: column; gap: 3px;
-      animation: slideIn 0.25s ease;
-    }
-    .chat-toast.show { display: flex; }
-    @keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
-    .toast-name { font-weight: 600; color: #9d8fff; font-size: 11px; }
-    .toast-text { color: #ddd; }
+/* ── TABS inside chat panel ──── */
+.chat-tabs {
+  display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.chat-tab {
+  flex: 1; padding: 11px 6px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .5px;
+  background: none; border: none; color: var(--text3);
+  border-bottom: 2px solid transparent; transition: all .2s;
+}
+.chat-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.chat-tab:hover { color: var(--text2); }
+.chat-tab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--red); color: #fff; border-radius: 10px;
+  padding: 0 5px; font-size: 9px; min-width: 16px; height: 14px;
+  margin-left: 4px; display: none;
+}
+.chat-tab-badge.show { display: inline-flex; }
 
-    /* ════════════════════════════════════════
-       LANDSCAPE MODE — video fullscreen +
-       chat slides over video as overlay
-    ════════════════════════════════════════ */
+/* ── CHAT VIEW ──── */
+.chat-view { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.chat-view.hidden { display: none; }
 
-    /* Landscape chat overlay — hidden by default */
-    .landscape-chat-overlay {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0;
-      height: 55%; z-index: 100; pointer-events: none;
-      background: linear-gradient(to top, rgba(0,0,0,0.82) 70%, transparent 100%);
-      flex-direction: column; justify-content: flex-end;
-    }
-    /* Landscape message list (inside overlay) */
-    .landscape-messages {
-      flex: 1; overflow: hidden; padding: 8px 12px; display: flex;
-      flex-direction: column; gap: 6px; justify-content: flex-end;
-    }
-    .landscape-msg {
-      font-size: 12px; line-height: 1.4;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-      animation: fadeIn 0.2s ease;
-      pointer-events: none;
-    }
-    .landscape-msg .lm-name { font-weight: 600; color: #9d8fff; margin-right: 5px; }
-    .landscape-msg .lm-text { color: #fff; }
-    /* Landscape chat input row */
-    .landscape-input-row {
-      display: flex; gap: 8px; padding: 8px 12px 10px;
-      pointer-events: all;
-    }
-    .landscape-input {
-      flex: 1; padding: 7px 12px; background: rgba(30,30,46,0.85);
-      border: 1px solid #6c63ff; border-radius: 18px; color: #eee;
-      font-size: 12px; outline: none; font-family: inherit;
-    }
-    .landscape-send {
-      background: #6c63ff; border: none; border-radius: 50%;
-      width: 32px; height: 32px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .landscape-send:hover { background: #5a52e0; }
+/* Messages list */
+.messages {
+  flex: 1; overflow-y: auto; padding: 10px 10px 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.msg { display: flex; gap: 8px; animation: fadeUp .2s ease; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
+.avatar {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.avatar.me    { background: #2a1a5e; color: #9d8fff; }
+.avatar.other { background: #1a3a25; color: #5adf94; }
+.msg-body { flex: 1; min-width: 0; }
+.msg-name  { font-size: 10px; color: var(--text3); margin-bottom: 2px; font-weight: 700; letter-spacing: .2px; }
+.msg-bubble {
+  display: inline-block; padding: 6px 10px; border-radius: 0 10px 10px 10px;
+  font-size: 13px; line-height: 1.5; word-break: break-word;
+  color: var(--text); max-width: 100%;
+}
+.msg.me .msg-bubble  { background: #1a1040; border: 1px solid #2a1a6e; border-radius: 10px 0 10px 10px; }
+.msg.other .msg-bubble { background: var(--surface3); border: 1px solid var(--border); }
+.msg-time  { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: 'Space Mono', monospace; }
+.system-msg {
+  font-size: 11px; color: var(--text3); text-align: center;
+  padding: 4px 8px; font-style: italic;
+}
 
-    /* Rotate hint shown in portrait on mobile */
-    .rotate-hint {
-      display: none; position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-      background: rgba(108,99,255,0.85); color: #fff; font-size: 11px;
-      padding: 6px 16px; border-radius: 20px; z-index: 50;
-      animation: fadeInOut 3s ease forwards; pointer-events: none;
-    }
-    @keyframes fadeInOut { 0%{opacity:0} 10%{opacity:1} 80%{opacity:1} 100%{opacity:0} }
+/* Typing indicator */
+.typing-indicator {
+  padding: 4px 10px 8px; min-height: 28px;
+  font-size: 11px; color: var(--text3); font-style: italic;
+}
 
-    /* ════════════════════════════════════════
-       RESPONSIVE — portrait mobile
-    ════════════════════════════════════════ */
-    @media (max-width: 768px) {
-      body { overflow-y: auto; }
-      #appScreen { flex-direction: column; }
-      .main-area { flex-direction: column; }
-      .video-container { min-height: 210px; }
+/* Chat input */
+.chat-input-wrap {
+  padding: 10px; border-top: 1px solid var(--border);
+  display: flex; gap: 7px; align-items: flex-end; flex-shrink: 0;
+}
+.chat-input {
+  flex: 1; padding: 9px 12px; background: var(--surface3);
+  border: 1px solid var(--border); border-radius: 14px;
+  color: var(--text); font-size: 13px; outline: none;
+  resize: none; max-height: 80px; line-height: 1.5;
+  transition: border-color .2s;
+}
+.chat-input:focus { border-color: var(--accent); }
+.chat-input::placeholder { color: var(--text3); }
+.send-btn {
+  background: var(--accent-g); border: none; border-radius: 10px;
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: opacity .2s;
+}
+.send-btn:hover { opacity: .85; }
 
-      /* Hide sidebar chat on mobile */
-      .chat-panel { display: none; }
+/* ── MEMBERS VIEW ──── */
+.members-view { display: none; flex: 1; overflow-y: auto; padding: 10px; flex-direction: column; gap: 6px; }
+.members-view.visible { display: flex; }
 
-      /* Show toggle button in topbar */
-      .chat-toggle-btn { display: flex; align-items: center; gap: 5px; }
+.member-card {
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px;
+  animation: fadeUp .2s ease;
+}
+.member-avatar {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+.member-me   { background: #2a1a5e; color: #9d8fff; }
+.member-other{ background: #1a3a25; color: #5adf94; }
+.member-info { flex: 1; min-width: 0; }
+.member-name { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.member-badge {
+  background: var(--accent); color: #fff; font-size: 9px;
+  padding: 1px 6px; border-radius: 10px; font-weight: 700; letter-spacing: .3px;
+}
+.member-watch {
+  font-size: 11px; color: var(--text3); margin-top: 2px;
+  font-family: 'Space Mono', monospace;
+}
+.member-online-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
 
-      /* When chat is slid open on portrait */
-      .chat-panel.mobile-open {
-        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
-        width: 100%; height: 55%; z-index: 150;
-        border-left: none; border-top: 1px solid #2a2a3a;
-      }
+/* ════════════════════════════════════════
+   TOAST NOTIFICATION
+════════════════════════════════════════ */
+.chat-toast {
+  position: fixed; top: 62px; right: 12px; z-index: 300;
+  background: var(--surface); border: 1px solid var(--accent);
+  border-radius: var(--radius); padding: 10px 14px; max-width: 240px;
+  font-size: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.6);
+  display: none; flex-direction: column; gap: 3px;
+  transform: translateX(20px); opacity: 0;
+  transition: all .25s ease;
+}
+.chat-toast.show { display: flex; transform: translateX(0); opacity: 1; }
+.toast-name { font-weight: 700; color: var(--accent); font-size: 11px; }
+.toast-text { color: var(--text2); }
 
-      .topbar h2 { font-size: 13px; }
-      .ctrl-btn { font-size: 11px; padding: 6px 9px; }
-    }
+/* ════════════════════════════════════════
+   LANDSCAPE OVERLAY
+════════════════════════════════════════ */
+.landscape-chat-overlay {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  height: 55%; z-index: 100; pointer-events: none;
+  background: linear-gradient(to top, rgba(0,0,0,.85) 60%, transparent 100%);
+  flex-direction: column; justify-content: flex-end;
+}
+.landscape-messages {
+  flex: 1; overflow: hidden; padding: 8px 12px;
+  display: flex; flex-direction: column; gap: 5px; justify-content: flex-end;
+}
+.landscape-msg {
+  font-size: 12px; line-height: 1.4;
+  text-shadow: 0 1px 4px rgba(0,0,0,.95);
+  animation: fadeUp .2s ease; pointer-events: none;
+}
+.landscape-msg .lm-name { font-weight: 700; color: #b08fff; margin-right: 5px; }
+.landscape-msg .lm-text { color: #fff; }
+.landscape-input-row {
+  display: flex; gap: 8px; padding: 8px 12px 12px;
+  pointer-events: all;
+}
+.landscape-input {
+  flex: 1; padding: 8px 13px;
+  background: rgba(20,15,40,.9); border: 1px solid var(--accent);
+  border-radius: 18px; color: #eee; font-size: 12px; outline: none; font-family: inherit;
+}
+.landscape-send {
+  background: var(--accent); border: none; border-radius: 50%;
+  width: 32px; height: 32px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
 
-    /* ════════════════════════════════════════
-       LANDSCAPE MOBILE ACTIVE STATE
-    ════════════════════════════════════════ */
-    body.landscape-mode #appScreen {
-      flex-direction: row; height: 100vh; overflow: hidden;
-    }
-    body.landscape-mode .topbar { display: none; }        /* hide topbar to save space */
-    body.landscape-mode .chat-panel { display: none; }    /* hide sidebar */
-    body.landscape-mode .main-area { flex: 1; }
-    body.landscape-mode .video-area { flex: 1; }
-    body.landscape-mode .video-container { min-height: unset; flex: 1; }
-    body.landscape-mode .progress-bar-wrap,
-    body.landscape-mode .controls,
-    body.landscape-mode .reactions-bar { padding-left: 8px; padding-right: 8px; }
-    body.landscape-mode .landscape-chat-overlay { display: flex; }  /* show overlay */
-    body.landscape-mode .chat-panel.mobile-open { display: none; } /* hide portrait drawer */
+/* Floating topbar for landscape */
+.landscape-topbar {
+  display: none; position: fixed; top: 8px; left: 8px; z-index: 110;
+  gap: 8px; align-items: center;
+}
+body.landscape-mode .landscape-topbar { display: flex; }
+.landscape-topbar-btn {
+  background: rgba(15,10,30,.85); border: 1px solid var(--border); border-radius: 8px;
+  padding: 5px 11px; color: var(--text2); font-size: 11px; font-weight: 600;
+}
+.landscape-room-label {
+  background: rgba(124,92,252,.8); color: #fff; border-radius: 20px;
+  padding: 4px 12px; font-size: 11px; font-weight: 700;
+  font-family: 'Space Mono', monospace;
+}
 
-    /* Floating back button in landscape (top-left) */
-    .landscape-topbar {
-      display: none; position: fixed; top: 8px; left: 8px; z-index: 110;
-      gap: 8px; align-items: center;
-    }
-    body.landscape-mode .landscape-topbar { display: flex; }
-    .landscape-topbar-btn {
-      background: rgba(30,30,46,0.85); border: 1px solid #333; border-radius: 8px;
-      padding: 5px 10px; color: #ccc; font-size: 11px; cursor: pointer;
-    }
-    .landscape-room-label {
-      background: rgba(108,99,255,0.7); color: #fff; border-radius: 20px;
-      padding: 4px 12px; font-size: 11px;
-    }
-  </style>
+/* ════════════════════════════════════════
+   LANDSCAPE MODE
+════════════════════════════════════════ */
+body.landscape-mode #appScreen { flex-direction: row; height: 100vh; overflow: hidden; }
+body.landscape-mode .topbar { display: none; }
+body.landscape-mode .chat-panel { display: none; }
+body.landscape-mode .main-area { flex: 1; }
+body.landscape-mode .video-area { flex: 1; }
+body.landscape-mode .video-container { min-height: unset; flex: 1; }
+body.landscape-mode .landscape-chat-overlay { display: flex; }
+body.landscape-mode .chat-panel.mobile-open { display: none; }
+
+/* ════════════════════════════════════════
+   MOBILE (portrait)
+════════════════════════════════════════ */
+@media (max-width: 768px) {
+  body { overflow-y: auto; }
+  #appScreen { flex-direction: column; height: auto; min-height: 100vh; }
+  .main-area { flex-direction: column; }
+  .video-container { min-height: 200px; }
+  .chat-panel { display: none; }
+  .chat-toggle-btn { display: flex; align-items: center; }
+
+  .chat-panel.mobile-open {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+    width: 100%; height: 60%; z-index: 150;
+    border-left: none; border-top: 1px solid var(--border);
+    border-radius: 16px 16px 0 0;
+  }
+  .topbar-logo { font-size: 13px; }
+}
+</style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════
-     JOIN SCREEN
-════════════════════════════════════════ -->
+<!-- ════ JOIN SCREEN ════════════════════════════════════════ -->
 <div id="joinScreen">
   <div class="join-card">
-    <h1>🎬 Watch Party</h1>
-    <p>Dost ke saath saath video dekho aur chat karo</p>
-    <input type="text" id="nameInput" placeholder="Tera naam..." maxlength="20" />
-    <input type="text" id="roomInput" placeholder="Room ID (Jo tmhre dost diye hain)" />
-    <button class="btn-primary" onclick="joinRoom()">Room Join Karo →</button>
-    <div class="divider">— ya —</div>
-    <button class="btn-secondary" onclick="createRoom()">Naya Room Banao 🎉</button>
-    <p style="margin-top:14px;font-size:11px;color:#555;">Room ID share karo dost ke saath</p>
+    <div class="join-logo">Cine<span>Sync</span> 🎬</div>
+    <div class="join-sub">Dost ke saath saath video dekho — bilkul sync mein</div>
+    <div class="form-group">
+      <label class="form-label">Tera Naam</label>
+      <input class="form-input" type="text" id="nameInput" placeholder="e.g. Rahul, Priya..." maxlength="20" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Room ID</label>
+      <input class="form-input" type="text" id="roomInput" placeholder="Dost ka Room ID daalo..." />
+    </div>
+    <button class="btn-join" onclick="joinRoom()">Room Join Karo →</button>
+    <div class="divider">ya</div>
+    <button class="btn-create" onclick="createRoom()">✨ Naya Room Banao</button>
+    <div class="join-footer">Room ID share karo — dost aake join kar lenge 🎉</div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     UPLOAD MODAL
-════════════════════════════════════════ -->
+<!-- ════ UPLOAD MODAL ════════════════════════════════════════ -->
 <div class="upload-overlay" id="uploadOverlay">
   <div class="upload-modal">
     <h3>📹 Video Add Karo</h3>
-    <p>Ek baar upload karo — room mein sabko dikhega!</p>
+    <p>Ek baar upload karo — sab dekhenge!</p>
     <div class="upload-tabs">
-      <button class="tab-btn active" onclick="switchTab('cloudinary')">☁️ Cloudinary Upload</button>
-      <button class="tab-btn"        onclick="switchTab('url')">🔗 URL Paste Karo</button>
+      <button class="tab-btn active" onclick="switchTab('cloudinary')">☁️ Cloudinary</button>
+      <button class="tab-btn" onclick="switchTab('url')">🔗 URL Paste Karo</button>
     </div>
 
     <!-- CLOUDINARY TAB -->
     <div class="tab-content active" id="tab-cloudinary">
       <div class="hint-box">
-        <b>Pehli baar? Cloudinary setup karo (free):</b><br>
-        1. <a href="https://cloudinary.com/users/register_free" target="_blank">cloudinary.com</a> → free account banao<br>
-        2. Dashboard → Settings → Upload → Upload Presets<br>
-        3. "Add upload preset" → Signing mode: <b>Unsigned</b> → Save<br>
+        <b>Pehli baar? Free Cloudinary setup:</b><br>
+        1. <a href="https://cloudinary.com/users/register_free" target="_blank">cloudinary.com</a> → free account<br>
+        2. Settings → Upload → Upload Presets → Add Preset<br>
+        3. Signing mode: <b>Unsigned</b> → Save<br>
         4. Cloud name + preset name neeche daalo
       </div>
       <div class="config-row">
-        <div><label>Cloud Name</label><input type="text" id="cloudName" placeholder="e.g. dxyz123abc" /></div>
-        <div><label>Upload Preset</label><input type="text" id="uploadPreset" placeholder="e.g. watch_party" /></div>
+        <div><label>Cloud Name</label><input type="text" id="cloudName" placeholder="dxyz123abc" /></div>
+        <div><label>Upload Preset</label><input type="text" id="uploadPreset" placeholder="watch_party" /></div>
       </div>
       <div class="cloud-drop" id="cloudDrop"
            ondragover="cloudDragOver(event)" ondragleave="cloudDragLeave()"
            ondrop="cloudDropFile(event)" onclick="document.getElementById('cloudFileInput').click()">
-        <div class="icon">📁</div>
+        <div class="drop-icon">📁</div>
         <p>Click karo ya video <span>drag & drop</span> karo<br>
-        <span style="font-size:11px;color:#555;">MP4, WebM — Cloudinary free: 25GB</span></p>
+           <span style="font-size:11px;color:var(--text3)">MP4, WebM — Cloudinary free: 25GB</span></p>
       </div>
       <input type="file" id="cloudFileInput" accept="video/*" style="display:none" onchange="uploadToCloudinary(event)">
       <div class="progress-upload" id="uploadProgress">
@@ -479,52 +607,45 @@
     <!-- URL TAB -->
     <div class="tab-content" id="tab-url">
       <div class="hint-box">
-        <b>Google Drive se video:</b><br>
-        1. Drive pe video upload karo<br>
-        2. Share → "Anyone with the link" karo<br>
-        3. Link copy karo → yahan paste karo ✅<br><br>
-        <b>Direct .mp4 URL bhi kaam karta hai</b> (Cloudinary, S3, etc.)<br><br>
-        ⚠️ <b>Drive note:</b> Play/Pause sync nahi hoga. Full sync = Cloudinary use karo.
+        <b>Google Drive se:</b><br>
+        1. Drive → video → Share → "Anyone with the link"<br>
+        2. Link copy → yahan paste karo ✅<br><br>
+        <b>Direct .mp4 URL bhi chalega</b> (Cloudinary, S3, etc.)<br>
+        ⚠️ Drive mode mein Play/Pause sync nahi hoga.
       </div>
       <div class="url-input-wrap">
-        <label>Video URL paste karo</label>
+        <label>Video URL</label>
         <input type="url" id="videoUrlInput"
-          placeholder="https://drive.google.com/file/d/... ya direct .mp4"
+          placeholder="https://drive.google.com/file/d/... ya .mp4 URL"
           oninput="checkUrlType(this.value)" />
       </div>
       <div class="drive-notice" id="driveNotice">
-        ✅ Google Drive URL detect hua! Auto-convert → iframe embed se chalega.<br>
-        ⚠️ Play/Pause sync sirf direct URLs pe kaam karta hai.
+        ✅ Google Drive URL detect hua! iframe embed mode mein chalega.<br>
+        ⚠️ Full sync ke liye Cloudinary use karo.
       </div>
-      <button class="btn-primary" onclick="loadFromUrl()" style="margin-bottom:8px;">Video Load Karo →</button>
+      <button class="btn-load" onclick="loadFromUrl()">Video Load Karo →</button>
     </div>
 
     <button class="modal-close" onclick="closeUploadModal()">✕ Cancel</button>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     CHAT NOTIFICATION TOAST
-════════════════════════════════════════ -->
+<!-- ════ TOAST ════════════════════════════════════════ -->
 <div class="chat-toast" id="chatToast">
   <span class="toast-name" id="toastName">User</span>
   <span class="toast-text" id="toastText">message...</span>
 </div>
 
-<!-- ════════════════════════════════════════
-     LANDSCAPE TOPBAR (floating)
-════════════════════════════════════════ -->
+<!-- ════ LANDSCAPE FLOATING TOPBAR ════════════════════════════ -->
 <div class="landscape-topbar">
   <button class="landscape-topbar-btn" onclick="copyRoomId()">📋 Room</button>
   <span class="landscape-room-label" id="landscapeRoomLabel"></span>
-  <span class="online-pill" style="font-size:11px;padding:3px 8px;">
+  <span class="online-pill" style="font-size:11px;padding:3px 9px">
     <span class="live-dot"></span><span id="onlineCountLandscape">1</span>
   </span>
 </div>
 
-<!-- ════════════════════════════════════════
-     LANDSCAPE CHAT OVERLAY
-════════════════════════════════════════ -->
+<!-- ════ LANDSCAPE CHAT OVERLAY ════════════════════════════════ -->
 <div class="landscape-chat-overlay" id="landscapeOverlay">
   <div class="landscape-messages" id="landscapeMessages"></div>
   <div class="landscape-input-row">
@@ -537,21 +658,13 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     ROTATE HINT (portrait mobile)
-════════════════════════════════════════ -->
-<div class="rotate-hint" id="rotateHint">📱 Rotate for theatre mode!</div>
-
-<!-- ════════════════════════════════════════
-     MAIN APP SCREEN
-════════════════════════════════════════ -->
+<!-- ════ MAIN APP ════════════════════════════════════════════ -->
 <div id="appScreen">
+  <!-- TOPBAR -->
   <div class="topbar">
-    <h2>🎬 Watch Party</h2>
-    <div class="room-badge" onclick="copyRoomId()">Room: <span id="roomIdDisplay"></span> 📋</div>
+    <div class="topbar-logo">Cine<span>Sync</span></div>
+    <div class="room-chip" onclick="copyRoomId()">Room: <b id="roomIdDisplay">—</b> 📋</div>
     <div class="online-pill"><span class="live-dot"></span><span id="onlineCount">1</span> online</div>
-
-    <!-- Mobile chat toggle button -->
     <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleMobileChat()">
       💬 Chat
       <span class="notif-badge" id="notifBadge">0</span>
@@ -559,81 +672,114 @@
   </div>
 
   <div class="main-area">
+    <!-- VIDEO SIDE -->
     <div class="video-area">
-
-      <!-- VIDEO CONTAINER -->
       <div class="video-container" id="videoContainer" onclick="handleVideoClick(event)">
-        <video id="mainVideo"></video>
-        <iframe id="driveFrame" allowfullscreen allow="autoplay"></iframe>
+        <video id="mainVideo" controlsList="nodownload nofullscreen noremoteplayback" disablePictureInPicture></video>
+        <iframe id="driveFrame" allowfullscreen
+          allow="autoplay"
+          sandbox="allow-scripts allow-same-origin allow-presentation"
+          style="pointer-events:auto"></iframe>
         <div class="drive-banner" id="driveBanner">📺 Google Drive — sync limited</div>
         <div class="video-placeholder" id="placeholder">
-          <div class="icon">🎬</div>
-          <p>Room mein abhi koi video nahi hai</p>
-          <button onclick="openUploadModal()">+ Video Add Karo</button>
+          <div class="ph-icon">🎬</div>
+          <h3>Koi video nahi hai</h3>
+          <p>Room creator video add karega toh yahan dikhegi</p>
+          <button class="btn-add-video" id="addVideoBtn" onclick="openUploadModal()" style="display:none">+ Video Add Karo</button>
         </div>
         <div class="loading-overlay" id="loadingOverlay">
           <div class="spinner"></div>
-          <p style="font-size:13px;color:#aaa;">Video load ho rahi hai...</p>
+          <p style="font-size:13px;color:var(--text2)">Video load ho rahi hai...</p>
         </div>
       </div>
 
+      <!-- PROGRESS BAR -->
       <div class="progress-bar-wrap" id="progressBarWrap">
         <div class="progress-bar" onclick="seekVideo(event)">
           <div class="progress-fill" id="progressFill"></div>
         </div>
       </div>
 
+      <!-- CONTROLS -->
       <div class="controls">
-        <button class="ctrl-btn" id="playBtn" onclick="togglePlay()">▶ Play</button>
+        <button class="ctrl-btn primary" id="playBtn" onclick="togglePlay()">▶ Play</button>
         <button class="ctrl-btn" id="syncBtn" onclick="requestSync()">🔄 Sync</button>
-        <button class="ctrl-btn" onclick="openUploadModal()">📹 Video Change</button>
+        <button class="ctrl-btn" id="changeVideoBtn" onclick="openUploadModal()" style="display:none">📹 Change Video</button>
         <span class="time-info" id="timeDisplay">0:00 / 0:00</span>
       </div>
 
+      <!-- REACTIONS BAR -->
       <div class="reactions-bar">
-        <span style="font-size:11px;color:#555;margin-right:4px;">React:</span>
+        <span style="font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-right:3px">React</span>
         <button class="react-btn" onclick="sendReaction('😂')">😂</button>
         <button class="react-btn" onclick="sendReaction('😮')">😮</button>
         <button class="react-btn" onclick="sendReaction('❤️')">❤️</button>
         <button class="react-btn" onclick="sendReaction('🔥')">🔥</button>
         <button class="react-btn" onclick="sendReaction('👏')">👏</button>
         <button class="react-btn" onclick="sendReaction('😭')">😭</button>
+        <button class="react-btn" onclick="sendReaction('😍')">😍</button>
       </div>
     </div>
 
-    <!-- SIDEBAR CHAT (desktop + portrait tablet) -->
+    <!-- CHAT PANEL -->
     <div class="chat-panel" id="chatPanel">
-      <div class="chat-title">
-        💬 Live Chat
-        <span class="chat-title-badge" id="chatTitleBadge">0</span>
-      </div>
-      <div class="messages" id="messageList"></div>
-      <div class="chat-input-wrap">
-        <textarea class="chat-input" id="chatInput" placeholder="Message likho..." rows="1"
-          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        <button class="send-btn" onclick="sendMessage()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      <!-- TABS: Chat | Members -->
+      <div class="chat-tabs">
+        <button class="chat-tab active" id="tabChat" onclick="switchChatTab('chat')">
+          💬 Chat <span class="chat-tab-badge" id="chatTabBadge">0</span>
+        </button>
+        <button class="chat-tab" id="tabMembers" onclick="switchChatTab('members')">
+          👥 Members <span class="chat-tab-badge" id="membersTabBadge">0</span>
         </button>
       </div>
+
+      <!-- CHAT VIEW -->
+      <div class="chat-view" id="chatView">
+        <div class="messages" id="messageList"></div>
+        <div class="typing-indicator" id="typingIndicator"></div>
+        <div class="chat-input-wrap">
+          <textarea class="chat-input" id="chatInput" placeholder="Message likho... (Enter to send)" rows="1"
+            onkeydown="handleKey(event)" oninput="autoResize(this); handleTyping()"></textarea>
+          <button class="send-btn" onclick="sendMessage()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MEMBERS VIEW -->
+      <div class="members-view" id="membersView"></div>
     </div>
   </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
 <script>
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  STATE
-// ═══════════════════════════════════════════════════════
-const socket      = io();
+// ═══════════════════════════════════════════════════
+const socket = io({
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+});
+
 let myName        = '';
 let myRoomId      = '';
 let isSyncing     = false;
 let isDriveMode   = false;
-let unreadCount   = 0;       // unread messages when chat is hidden
-let chatVisible   = true;    // is chat panel visible to user?
-let toastTimer    = null;    // auto-hide toast timer
-let isLandscape   = false;   // current orientation
+let unreadCount   = 0;
 let mobileDrawerOpen = false;
+let isLandscape   = false;
+let isCreator     = false;
+let toastTimer    = null;
+let typingTimer   = null;
+let isTyping      = false;
+let allUsers      = [];   // [{id, name, joinedAt, watchTime, isCreator}]
+let localWatchStart = null;  // timestamp when local user started watching
+let localWatchAccum = 0;     // accumulated local watch seconds
+let heartbeatInterval = null;
+let lastHeartbeatTime = Date.now();
 
 // DOM refs
 const video           = document.getElementById('mainVideo');
@@ -644,15 +790,17 @@ const loadingOverlay  = document.getElementById('loadingOverlay');
 const progressBarWrap = document.getElementById('progressBarWrap');
 const playBtn         = document.getElementById('playBtn');
 const chatPanel       = document.getElementById('chatPanel');
+const addVideoBtn     = document.getElementById('addVideoBtn');
+const changeVideoBtn  = document.getElementById('changeVideoBtn');
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  JOIN / ROOM
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function generateRoomId() { return Math.random().toString(36).substring(2,8).toUpperCase(); }
 
 function createRoom() {
   const name = document.getElementById('nameInput').value.trim();
-  if (!name) { alert('Naam likho!'); return; }
+  if (!name) { alert('Naam likho pehle!'); return; }
   document.getElementById('roomInput').value = generateRoomId();
   joinRoom();
 }
@@ -660,59 +808,143 @@ function createRoom() {
 function joinRoom() {
   const name   = document.getElementById('nameInput').value.trim();
   const roomId = document.getElementById('roomInput').value.trim().toUpperCase();
-  if (!name)   { alert('Naam likho!'); return; }
-  if (!roomId) { alert('Room ID likho ya Naya Room banao!'); return; }
+  if (!name)   { alert('Naam likho pehle!'); return; }
+  if (!roomId) { alert('Room ID daalo ya naya room banao!'); return; }
   myName = name; myRoomId = roomId;
   socket.emit('join-room', { roomId, userName: name });
-  document.getElementById('joinScreen').style.display   = 'none';
-  document.getElementById('appScreen').style.display    = 'flex';
-  document.getElementById('roomIdDisplay').textContent  = roomId;
+  document.getElementById('joinScreen').style.display  = 'none';
+  document.getElementById('appScreen').style.display   = 'flex';
+  document.getElementById('roomIdDisplay').textContent = roomId;
   document.getElementById('landscapeRoomLabel').textContent = roomId;
-
-  // Show rotate hint on mobile after joining
-  if (window.innerWidth <= 768) showRotateHint();
+  startHeartbeat();
 }
 
 function copyRoomId() {
   navigator.clipboard.writeText(myRoomId)
-    .then(() => alert('Room ID copy hua: ' + myRoomId + '\nDost ko bhejo!'));
+    .then(() => showToast('🎉 Copied!', 'Room ID: ' + myRoomId + ' — dost ko bhejo!'))
+    .catch(() => alert('Room ID: ' + myRoomId));
 }
 
-// ═══════════════════════════════════════════════════════
+// ── Creator privileges ────────────────────────────────────────
+function setCreatorMode(creator) {
+  isCreator = creator;
+  addVideoBtn.style.display    = creator ? 'inline-flex' : 'none';
+  changeVideoBtn.style.display = creator ? 'flex' : 'none';
+}
+
+// ═══════════════════════════════════════════════════
+//  HEARTBEAT — keeps server in sync + watch time
+// ═══════════════════════════════════════════════════
+function startHeartbeat() {
+  clearInterval(heartbeatInterval);
+  heartbeatInterval = setInterval(() => {
+    if (!myRoomId) return;
+    const now   = Date.now();
+    const delta = (now - lastHeartbeatTime) / 1000; // seconds since last heartbeat
+    lastHeartbeatTime = now;
+
+    let watchDelta = 0;
+    if (!isDriveMode && video.src && !video.paused && !video.ended) {
+      watchDelta = delta;
+    }
+
+    socket.emit('heartbeat', {
+      roomId        : myRoomId,
+      currentTime   : isDriveMode ? undefined : (video.src ? video.currentTime : undefined),
+      watchTimeDelta: watchDelta,
+    });
+  }, 5000);
+}
+
+// ═══════════════════════════════════════════════════
 //  SOCKET EVENTS
-// ═══════════════════════════════════════════════════════
-socket.on('join-confirmed', ({ users, videoUrl, videoName }) => {
+// ═══════════════════════════════════════════════════
+socket.on('connect', () => {
+  if (myRoomId) {
+    // Reconnected — re-join room
+    socket.emit('join-room', { roomId: myRoomId, userName: myName });
+    addSystemMsg('🔌 Reconnected!');
+  }
+});
+
+socket.on('disconnect', () => {
+  addSystemMsg('⚡ Connection cut gaya — reconnect ho raha hai...');
+});
+
+socket.on('join-confirmed', ({ users, videoUrl, videoName, videoTime, isPlaying, isCreator: creator, history }) => {
+  allUsers = users;
   updateOnlineCount(users.length);
-  addSystemMsg('✅ Room join ho gaya! (' + users.length + ' online)');
+  setCreatorMode(creator);
+  renderMembers();
+
+  // Load chat history
+  if (history && history.length) {
+    history.forEach(m => {
+      if (m.type === 'system') addSystemMsg('📜 ' + m.text);
+      else if (m.type === 'chat') addMsg(m.userName, m.userName === myName ? 'me' : 'other', m.message, m.time);
+    });
+    addSystemMsg('── History upar, live messages neeche ──');
+  }
+
+  addSystemMsg('✅ Room join hua! (' + users.length + ' online)');
+
   if (videoUrl) {
-    addSystemMsg('📹 Room mein video hai — load ho rahi hai...');
+    addSystemMsg('📹 Video mil gayi — load ho rahi hai...');
     loadVideoUrl(videoUrl, videoName, false);
+    // Sync to current position after brief delay
+    setTimeout(() => {
+      if (!isDriveMode && video.readyState >= 2) {
+        video.currentTime = videoTime || 0;
+        if (isPlaying) video.play().catch(()=>{});
+        updatePlayBtn(isPlaying);
+      }
+    }, 800);
   }
 });
 
 socket.on('user-joined', ({ userName, users }) => {
+  allUsers = users;
   updateOnlineCount(users.length);
-  addSystemMsg('🟢 ' + userName + ' aa gaya! (' + users.length + ' online)');
+  renderMembers();
+  addSystemMsg('🟢 ' + userName + ' aa gaya!');
+  addLandscapeMsg('', '🟢 ' + userName + ' joined');
 });
 
 socket.on('user-left', ({ userName, users }) => {
+  allUsers = users;
   updateOnlineCount(users.length);
-  addSystemMsg('🔴 ' + userName + ' chala gaya (' + users.length + ' online)');
+  renderMembers();
+  addSystemMsg('🔴 ' + userName + ' chala gaya');
+});
+
+socket.on('users-update', ({ users }) => {
+  allUsers = users;
+  renderMembers();
+  // also update online count
+  updateOnlineCount(users.length);
 });
 
 socket.on('chat-message', ({ userName, message, time }) => {
   addMsg(userName, userName === myName ? 'me' : 'other', message, time);
-  addLandscapeMsg(userName, message); // also add to landscape overlay
-  // Show notification if chat is hidden or user is not looking at it
-  if (!isChatVisible()) {
-    triggerChatNotification(userName, message);
-  }
+  addLandscapeMsg(userName, message);
+  if (!isChatTabVisible()) triggerChatNotification(userName, message);
+  // Clear typing indicator when message arrives
+  clearTypingFor(userName);
+});
+
+socket.on('typing', ({ userName }) => {
+  if (userName === myName) return;
+  document.getElementById('typingIndicator').textContent = userName + ' type kar raha hai...';
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(() => {
+    document.getElementById('typingIndicator').textContent = '';
+  }, 2500);
 });
 
 socket.on('reaction', ({ emoji, userName }) => {
   showFloatingReaction(emoji);
-  addSystemMsg(userName + ': ' + emoji);
-  addLandscapeMsg('', emoji); // show in landscape overlay too
+  addSystemMsg(userName + ' reacted: ' + emoji);
+  addLandscapeMsg('', emoji);
 });
 
 socket.on('video-changed', ({ videoUrl, videoName, userName }) => {
@@ -721,7 +953,7 @@ socket.on('video-changed', ({ videoUrl, videoName, userName }) => {
 });
 
 socket.on('video-play', ({ currentTime, userName }) => {
-  if (isDriveMode) { addSystemMsg('▶ ' + userName + ' ne play kiya (Drive sync limited)'); return; }
+  if (isDriveMode) { addSystemMsg('▶ ' + userName + ' ne play kiya'); return; }
   isSyncing = true;
   video.currentTime = currentTime; video.play().catch(()=>{});
   updatePlayBtn(true); addSystemMsg('▶ ' + userName + ' ne play kiya');
@@ -729,7 +961,7 @@ socket.on('video-play', ({ currentTime, userName }) => {
 });
 
 socket.on('video-pause', ({ currentTime, userName }) => {
-  if (isDriveMode) { addSystemMsg('⏸ ' + userName + ' ne pause kiya (Drive sync limited)'); return; }
+  if (isDriveMode) { addSystemMsg('⏸ ' + userName + ' ne pause kiya'); return; }
   isSyncing = true;
   video.currentTime = currentTime; video.pause();
   updatePlayBtn(false); addSystemMsg('⏸ ' + userName + ' ne pause kiya');
@@ -740,239 +972,235 @@ socket.on('video-seek', ({ currentTime, userName }) => {
   if (isDriveMode) return;
   isSyncing = true;
   video.currentTime = currentTime;
-  addSystemMsg('⏩ ' + userName + ' → ' + formatTime(currentTime));
   setTimeout(() => isSyncing = false, 600);
 });
 
 socket.on('sync-state', ({ time, isPlaying }) => {
-  if (isDriveMode) { addSystemMsg('🔄 Sync (Drive mode — seek manually)'); return; }
+  if (isDriveMode) { addSystemMsg('🔄 Sync (Drive mode — manually seek)'); return; }
   isSyncing = true;
   video.currentTime = time;
   if (isPlaying) video.play().catch(()=>{}); else video.pause();
-  updatePlayBtn(isPlaying); addSystemMsg('✅ Sync! ' + formatTime(time));
+  updatePlayBtn(isPlaying); addSystemMsg('✅ Synced! @ ' + formatTime(time));
   setTimeout(() => isSyncing = false, 600);
 });
 
-// ── AUTO-SYNC HEARTBEAT (every 5s) ────────────────────
-// Keeps server videoTime fresh → late joiners get correct position
-setInterval(() => {
-  if (myRoomId && !isDriveMode && video.src && video.src !== window.location.href && !video.paused) {
-    socket.emit('video-seek', { roomId: myRoomId, currentTime: video.currentTime });
-  }
-}, 5000);
+// ═══════════════════════════════════════════════════
+//  MEMBERS PANEL
+// ═══════════════════════════════════════════════════
+function renderMembers() {
+  const container = document.getElementById('membersView');
+  container.innerHTML = '';
+  // Update members tab badge
+  document.getElementById('membersTabBadge').textContent = allUsers.length;
+  document.getElementById('membersTabBadge').classList.toggle('show', allUsers.length > 0);
 
-// ═══════════════════════════════════════════════════════
-//  CHAT NOTIFICATION SYSTEM
-// ═══════════════════════════════════════════════════════
-
-// Check if chat panel is actually visible to the user
-function isChatVisible() {
-  if (isLandscape) return true;           // landscape overlay always visible
-  if (window.innerWidth > 768) return true; // desktop sidebar always visible
-  return mobileDrawerOpen;               // mobile: only if drawer is open
+  allUsers.forEach(u => {
+    const isMe = u.id === socket.id || u.name === myName;
+    const div  = document.createElement('div');
+    div.className = 'member-card';
+    const watchStr = formatWatchTime(u.watchTime || 0);
+    div.innerHTML = `
+      <div class="member-avatar ${isMe ? 'member-me' : 'member-other'}">${u.name.substring(0,2).toUpperCase()}</div>
+      <div class="member-info">
+        <div class="member-name">
+          ${escapeHtml(u.name)}
+          ${isMe ? '<span class="member-badge">You</span>' : ''}
+          ${u.isCreator ? '<span class="member-badge" style="background:#ff9500">Host</span>' : ''}
+        </div>
+        <div class="member-watch">⏱ Watch time: ${watchStr}</div>
+      </div>
+      <div class="member-online-dot"></div>
+    `;
+    container.appendChild(div);
+  });
 }
 
-// Trigger badge + toast
+function formatWatchTime(seconds) {
+  if (!seconds || seconds < 1) return '0 sec';
+  if (seconds < 60) return Math.floor(seconds) + ' sec';
+  const m = Math.floor(seconds / 60), s = Math.floor(seconds % 60);
+  if (m < 60) return m + 'm ' + (s > 0 ? s + 's' : '');
+  const h = Math.floor(m / 60), rm = m % 60;
+  return h + 'h ' + (rm > 0 ? rm + 'm' : '');
+}
+
+// ═══════════════════════════════════════════════════
+//  CHAT TABS (Chat / Members)
+// ═══════════════════════════════════════════════════
+let activeChatTab = 'chat';
+
+function switchChatTab(tab) {
+  activeChatTab = tab;
+  document.getElementById('tabChat').classList.toggle('active', tab === 'chat');
+  document.getElementById('tabMembers').classList.toggle('active', tab === 'members');
+  document.getElementById('chatView').classList.toggle('hidden', tab !== 'chat');
+  document.getElementById('membersView').classList.toggle('visible', tab === 'members');
+  if (tab === 'chat') clearUnread();
+  if (tab === 'members') renderMembers();
+}
+
+// ═══════════════════════════════════════════════════
+//  NOTIFICATIONS
+// ═══════════════════════════════════════════════════
+function isChatTabVisible() {
+  if (isLandscape) return true;
+  if (window.innerWidth > 768) return activeChatTab === 'chat';
+  return mobileDrawerOpen && activeChatTab === 'chat';
+}
+
 function triggerChatNotification(userName, message) {
   unreadCount++;
-
-  // Update badge on toggle button
   const badge = document.getElementById('notifBadge');
   badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
   badge.classList.add('show');
-
-  // Update badge inside chat title
-  const titleBadge = document.getElementById('chatTitleBadge');
-  titleBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-  titleBadge.classList.add('show');
-
-  // Show toast notification
+  const tabBadge = document.getElementById('chatTabBadge');
+  tabBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+  tabBadge.classList.add('show');
   showToast(userName, message);
-
-  // Browser tab title blink
-  document.title = '💬 (' + unreadCount + ') Watch Party';
+  document.title = '💬 (' + unreadCount + ') CineSync';
 }
 
-// Show the floating toast popup
 function showToast(name, text) {
-  const toast    = document.getElementById('chatToast');
+  const toast = document.getElementById('chatToast');
   document.getElementById('toastName').textContent = name;
-  document.getElementById('toastText').textContent = text.length > 60 ? text.substring(0, 60) + '...' : text;
+  document.getElementById('toastText').textContent = text.length > 60 ? text.substring(0,60) + '...' : text;
   toast.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000); // auto-hide after 3s
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
-// Clear unread count when user opens chat
 function clearUnread() {
   unreadCount = 0;
   document.getElementById('notifBadge').classList.remove('show');
-  document.getElementById('chatTitleBadge').classList.remove('show');
+  document.getElementById('chatTabBadge').classList.remove('show');
   document.getElementById('chatToast').classList.remove('show');
-  document.title = '🎬 Watch Party';
+  document.title = '🎬 CineSync';
 }
 
-// ═══════════════════════════════════════════════════════
-//  MOBILE CHAT DRAWER (portrait)
-// ═══════════════════════════════════════════════════════
+function clearTypingFor(name) {
+  const ti = document.getElementById('typingIndicator');
+  if (ti.textContent.startsWith(name)) ti.textContent = '';
+}
+
+// ═══════════════════════════════════════════════════
+//  TYPING INDICATOR
+// ═══════════════════════════════════════════════════
+function handleTyping() {
+  if (!isTyping) {
+    isTyping = true;
+    socket.emit('typing', { roomId: myRoomId, userName: myName });
+  }
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(() => { isTyping = false; }, 2000);
+}
+
+// ═══════════════════════════════════════════════════
+//  MOBILE DRAWER
+// ═══════════════════════════════════════════════════
 function toggleMobileChat() {
   mobileDrawerOpen = !mobileDrawerOpen;
   chatPanel.classList.toggle('mobile-open', mobileDrawerOpen);
-  document.getElementById('chatToggleBtn').textContent = mobileDrawerOpen ? '✕ Close' : '💬 Chat';
-  // Re-add the badge after textContent wipe
-  const badge = document.createElement('span');
-  badge.id = 'notifBadge'; badge.className = 'notif-badge';
-  badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
-  if (unreadCount > 0) badge.classList.add('show');
-  document.getElementById('chatToggleBtn').appendChild(badge);
+  // Re-render toggle button label
+  const btn = document.getElementById('chatToggleBtn');
+  btn.innerHTML = (mobileDrawerOpen ? '✕ Close' : '💬 Chat') +
+    `<span class="notif-badge${unreadCount > 0 ? ' show' : ''}" id="notifBadge">${unreadCount > 9 ? '9+' : unreadCount}</span>`;
   if (mobileDrawerOpen) clearUnread();
 }
 
-// ═══════════════════════════════════════════════════════
-//  ORIENTATION / LANDSCAPE MODE
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  ORIENTATION
+// ═══════════════════════════════════════════════════
 function checkOrientation() {
   const landscape = window.innerWidth > window.innerHeight && window.innerWidth < 1024;
   if (landscape === isLandscape) return;
   isLandscape = landscape;
   document.body.classList.toggle('landscape-mode', landscape);
-  if (landscape) {
-    clearUnread();
-    // Close portrait drawer if open
-    if (mobileDrawerOpen) toggleMobileChat();
-  }
-  updateOnlineCount(parseInt(document.getElementById('onlineCount').textContent) || 1);
+  if (landscape && mobileDrawerOpen) toggleMobileChat();
+  if (landscape) clearUnread();
 }
-
-window.addEventListener('resize',           checkOrientation);
+window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
-checkOrientation(); // run once on load
+checkOrientation();
 
-function showRotateHint() {
-  const hint = document.getElementById('rotateHint');
-  hint.style.display = 'block';
-  setTimeout(() => hint.style.display = 'none', 3200);
-}
-
-// ═══════════════════════════════════════════════════════
-//  LANDSCAPE CHAT MESSAGES
-// ═══════════════════════════════════════════════════════
-const MAX_LANDSCAPE_MSGS = 6; // only last 6 visible at a time in overlay
-
+// ═══════════════════════════════════════════════════
+//  LANDSCAPE CHAT
+// ═══════════════════════════════════════════════════
+const MAX_L_MSGS = 6;
 function addLandscapeMsg(name, text) {
   const container = document.getElementById('landscapeMessages');
-  const div = document.createElement('div');
-  div.className = 'landscape-msg';
-  if (name) {
-    div.innerHTML = '<span class="lm-name">' + escapeHtml(name) + '</span>'
-                  + '<span class="lm-text">' + escapeHtml(text) + '</span>';
-  } else {
-    // emoji reaction — no name
-    div.innerHTML = '<span class="lm-text" style="font-size:16px">' + text + '</span>';
-  }
+  const div = document.createElement('div'); div.className = 'landscape-msg';
+  div.innerHTML = name
+    ? `<span class="lm-name">${escapeHtml(name)}</span><span class="lm-text">${escapeHtml(text)}</span>`
+    : `<span class="lm-text">${escapeHtml(text)}</span>`;
   container.appendChild(div);
-  // Remove old messages to keep overlay clean
-  while (container.children.length > MAX_LANDSCAPE_MSGS) {
-    container.removeChild(container.firstChild);
-  }
+  while (container.children.length > MAX_L_MSGS) container.removeChild(container.firstChild);
 }
-
-function handleLandscapeKey(e) {
-  if (e.key === 'Enter') { e.preventDefault(); sendLandscapeMessage(); }
-}
-
+function handleLandscapeKey(e) { if (e.key === 'Enter') { e.preventDefault(); sendLandscapeMessage(); } }
 function sendLandscapeMessage() {
-  const inp  = document.getElementById('landscapeInput');
-  const text = inp.value.trim();
-  if (!text) return;
-  socket.emit('chat-message', { roomId: myRoomId, message: text, userName: myName });
+  const inp = document.getElementById('landscapeInput');
+  const txt = inp.value.trim(); if (!txt) return;
+  socket.emit('chat-message', { roomId: myRoomId, message: txt, userName: myName });
   inp.value = '';
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  UPLOAD MODAL
-// ═══════════════════════════════════════════════════════
-function openUploadModal()  { document.getElementById('uploadOverlay').classList.add('show'); }
+// ═══════════════════════════════════════════════════
+function openUploadModal() {
+  if (!isCreator) { addSystemMsg('⚠️ Sirf room creator video change kar sakta hai!'); return; }
+  document.getElementById('uploadOverlay').classList.add('show');
+}
 function closeUploadModal() { document.getElementById('uploadOverlay').classList.remove('show'); }
 
 function switchTab(tab) {
-  const btns = document.querySelectorAll('.tab-btn');
-  btns[0].classList.toggle('active', tab === 'cloudinary');
-  btns[1].classList.toggle('active', tab === 'url');
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', (i===0 && tab==='cloudinary') || (i===1 && tab==='url')));
   document.getElementById('tab-cloudinary').classList.toggle('active', tab === 'cloudinary');
   document.getElementById('tab-url').classList.toggle('active', tab === 'url');
 }
 
 function checkUrlType(val) {
-  const isDrive = /drive\.google\.com\/file\/d\//.test(val);
-  document.getElementById('driveNotice').classList.toggle('show', isDrive);
+  document.getElementById('driveNotice').classList.toggle('show', /drive\.google\.com\/file\/d\//.test(val));
 }
 
-// ═══════════════════════════════════════════════════════
-//  CLOUDINARY UPLOAD
-// ═══════════════════════════════════════════════════════
+// ─── CLOUDINARY UPLOAD ────────────────────────────────────────
 function cloudDragOver(e)  { e.preventDefault(); document.getElementById('cloudDrop').classList.add('dragover'); }
 function cloudDragLeave()  { document.getElementById('cloudDrop').classList.remove('dragover'); }
-function cloudDropFile(e)  {
-  e.preventDefault(); cloudDragLeave();
-  const f = e.dataTransfer.files[0];
-  if (f && f.type.startsWith('video/')) doCloudinaryUpload(f);
-}
+function cloudDropFile(e)  { e.preventDefault(); cloudDragLeave(); const f = e.dataTransfer.files[0]; if (f && f.type.startsWith('video/')) doCloudinaryUpload(f); }
 function uploadToCloudinary(event) { const f = event.target.files[0]; if (f) doCloudinaryUpload(f); }
 
 function doCloudinaryUpload(file) {
-  const cloudName = document.getElementById('cloudName').value.trim();
-  const preset    = document.getElementById('uploadPreset').value.trim();
-  if (!cloudName || !preset) {
-    alert('Cloud Name aur Upload Preset daalo!\n\ncloudinary.com pe free account banao');
-    return;
-  }
+  const cn = document.getElementById('cloudName').value.trim();
+  const pr = document.getElementById('uploadPreset').value.trim();
+  if (!cn || !pr) { alert('Cloud Name aur Preset daalo!'); return; }
   const prog = document.getElementById('uploadProgress');
-  const status = document.getElementById('uploadStatus');
-  const fill   = document.getElementById('uploadFill');
-  prog.style.display = 'block'; status.textContent = 'Uploading... 0%'; fill.style.width = '0%';
-
+  const sta  = document.getElementById('uploadStatus');
+  const fill = document.getElementById('uploadFill');
+  prog.style.display = 'block'; sta.textContent = 'Uploading... 0%'; fill.style.width = '0%';
   const fd = new FormData();
-  fd.append('file', file); fd.append('upload_preset', preset);
-
+  fd.append('file', file); fd.append('upload_preset', pr);
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/video/upload');
-  xhr.upload.onprogress = (e) => {
-    if (e.lengthComputable) {
-      const pct = Math.round(e.loaded / e.total * 100);
-      fill.style.width = pct + '%'; status.textContent = 'Uploading... ' + pct + '%';
-    }
+  xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cn + '/video/upload');
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) { const p = Math.round(e.loaded/e.total*100); fill.style.width = p+'%'; sta.textContent = 'Uploading... '+p+'%'; }
   };
   xhr.onload = () => {
     if (xhr.status === 200) {
       const res = JSON.parse(xhr.responseText);
-      status.textContent = '✅ Upload ho gaya!'; fill.style.width = '100%';
+      sta.textContent = '✅ Upload complete!'; fill.style.width = '100%';
       setVideoForRoom(res.secure_url, file.name);
       setTimeout(closeUploadModal, 1000);
-    } else {
-      status.textContent = '❌ Error! Cloud name/preset check karo';
-    }
+    } else { sta.textContent = '❌ Error — cloud name/preset check karo'; }
   };
-  xhr.onerror = () => { status.textContent = '❌ Network error'; };
+  xhr.onerror = () => { sta.textContent = '❌ Network error'; };
   xhr.send(fd);
 }
 
-// ═══════════════════════════════════════════════════════
-//  URL LOAD — GOOGLE DRIVE FIX
-// ═══════════════════════════════════════════════════════
-
-// convertDriveUrl → returns "GDRIVE:<embedUrl>" for Drive links
-// WHY: Drive's CORS blocks <video> tag. /preview URL works only in <iframe>
+// ─── URL LOAD ─────────────────────────────────────────────────
 function convertDriveUrl(url) {
-  const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
-  if (match) {
-    const fileId   = match[1];
-    const embedUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
-    return 'GDRIVE:' + embedUrl; // flag for iframe mode
-  }
-  return url; // normal url — use <video>
+  const m = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (m) return 'GDRIVE:https://drive.google.com/file/d/' + m[1] + '/preview';
+  return url;
 }
-
 function loadFromUrl() {
   let url = document.getElementById('videoUrlInput').value.trim();
   if (!url) { alert('URL daalo!'); return; }
@@ -981,9 +1209,9 @@ function loadFromUrl() {
   closeUploadModal();
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  VIDEO CORE
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function setVideoForRoom(url, name) {
   socket.emit('set-video', { roomId: myRoomId, videoUrl: url, videoName: name });
   loadVideoUrl(url, name, true);
@@ -994,7 +1222,6 @@ function loadVideoUrl(url, name, isOwner) {
   placeholder.style.display = 'none';
 
   if (url.startsWith('GDRIVE:')) {
-    // ── DRIVE MODE (iframe) ──────────────────────────
     const embedUrl = url.replace('GDRIVE:', '');
     isDriveMode = true;
     video.style.display      = 'none';
@@ -1003,16 +1230,13 @@ function loadVideoUrl(url, name, isOwner) {
     driveBanner.classList.add('show');
     progressBarWrap.classList.add('drive-mode');
     playBtn.disabled = true;
-    playBtn.title    = 'Drive mode — iframe controls use karo';
+    playBtn.title    = 'Drive mode';
     document.getElementById('syncBtn').disabled = true;
     driveFrame.onload = () => {
       loadingOverlay.classList.remove('show');
-      addSystemMsg('✅ "' + name + '" ready! (Google Drive embed)');
-      addSystemMsg('ℹ️ Drive mode: iframe ke andar play karo');
+      addSystemMsg('✅ "' + name + '" ready! (Drive embed)');
     };
-
   } else {
-    // ── NORMAL VIDEO MODE ────────────────────────────
     isDriveMode = false;
     driveFrame.style.display = 'none'; driveFrame.src = '';
     driveBanner.classList.remove('show');
@@ -1023,12 +1247,13 @@ function loadVideoUrl(url, name, isOwner) {
     video.src = url; video.load();
     video.oncanplay = () => {
       loadingOverlay.classList.remove('show');
-      addSystemMsg('✅ "' + name + '" ready!');
+      addSystemMsg('✅ "' + name + '" ready! 🎬');
     };
     video.onerror = () => {
       loadingOverlay.classList.remove('show');
       addSystemMsg('❌ Video load nahi hua — URL check karo');
-      video.style.display = 'none'; placeholder.style.display = 'flex';
+      video.style.display = 'none';
+      placeholder.style.display = 'flex';
     };
     video.onloadedmetadata = updateTime;
     video.ontimeupdate = () => { updateTime(); updateProgress(); };
@@ -1038,8 +1263,11 @@ function loadVideoUrl(url, name, isOwner) {
 function handleVideoClick(e) { if (e.target === video) togglePlay(); }
 
 function togglePlay() {
-  if (isDriveMode) { addSystemMsg('ℹ️ Drive mode: iframe ke andar play/pause karo'); return; }
-  if (!video.src || video.src === window.location.href) { openUploadModal(); return; }
+  if (isDriveMode) { addSystemMsg('ℹ️ Drive mode: iframe ke andar play karo'); return; }
+  if (!video.src || video.src === window.location.href) {
+    if (isCreator) openUploadModal();
+    return;
+  }
   if (video.paused) {
     video.play().catch(()=>{});
     if (!isSyncing) socket.emit('video-play', { roomId: myRoomId, currentTime: video.currentTime });
@@ -1059,11 +1287,14 @@ function seekVideo(e) {
 }
 
 function requestSync() {
-  if (isDriveMode) { addSystemMsg('ℹ️ Drive mode: sync nahi hoga'); return; }
-  socket.emit('request-sync', { roomId: myRoomId }); addSystemMsg('🔄 Sync maanga...');
+  if (isDriveMode) { addSystemMsg('ℹ️ Drive mode mein sync nahi hoga'); return; }
+  socket.emit('request-sync', { roomId: myRoomId }); addSystemMsg('🔄 Sync maang raha hai...');
 }
 
-function updatePlayBtn(playing) { playBtn.textContent = playing ? '⏸ Pause' : '▶ Play'; }
+function updatePlayBtn(playing) {
+  playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
+  playBtn.classList.toggle('primary', !playing);
+}
 function updateProgress() {
   if (video.duration) document.getElementById('progressFill').style.width = (video.currentTime / video.duration * 100) + '%';
 }
@@ -1072,47 +1303,47 @@ function updateTime() {
 }
 function formatTime(s) {
   if (!s || isNaN(s)) return '0:00';
-  return Math.floor(s/60) + ':' + (Math.floor(s%60) < 10 ? '0' : '') + Math.floor(s%60);
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return (m >= 60 ? Math.floor(m/60) + ':' + String(m%60).padStart(2,'0') + ':' : m + ':') + String(sec).padStart(2,'0');
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  REACTIONS
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function sendReaction(emoji) {
   socket.emit('reaction', { roomId: myRoomId, emoji, userName: myName });
   showFloatingReaction(emoji);
 }
-
 function showFloatingReaction(emoji) {
   const el = document.createElement('div'); el.className = 'reaction-float'; el.textContent = emoji;
   const c  = document.getElementById('videoContainer');
   el.style.left   = (20 + Math.random() * (c.offsetWidth - 80)) + 'px';
   el.style.bottom = '60px';
-  c.appendChild(el); setTimeout(() => el.remove(), 2100);
+  c.appendChild(el); setTimeout(() => el.remove(), 2400);
 }
 
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 //  CHAT
-// ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function sendMessage() {
   const inp  = document.getElementById('chatInput');
-  const text = inp.value.trim();
-  if (!text) return;
+  const text = inp.value.trim(); if (!text) return;
   socket.emit('chat-message', { roomId: myRoomId, message: text, userName: myName });
-  inp.value = ''; inp.style.height = 'auto';
+  inp.value = ''; inp.style.height = 'auto'; isTyping = false;
 }
-
 function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
 function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 80) + 'px'; }
 
 function addMsg(name, type, text, time) {
   const t   = time || new Date().toLocaleTimeString('en', { hour:'2-digit', minute:'2-digit' });
-  const div = document.createElement('div'); div.className = 'msg';
+  const isMe = type === 'me';
+  const div = document.createElement('div');
+  div.className = 'msg ' + type;
   div.innerHTML =
-    '<div class="avatar ' + type + '">' + name.substring(0,2).toUpperCase() + '</div>' +
+    '<div class="avatar ' + type + '">' + escapeHtml(name.substring(0,2).toUpperCase()) + '</div>' +
     '<div class="msg-body">' +
-      '<div class="msg-name">' + name + '</div>' +
-      '<div class="msg-text">' + escapeHtml(text) + '</div>' +
+      '<div class="msg-name">' + escapeHtml(name) + '</div>' +
+      '<div class="msg-bubble">' + escapeHtml(text) + '</div>' +
       '<div class="msg-time">' + t + '</div>' +
     '</div>';
   const list = document.getElementById('messageList');
@@ -1126,19 +1357,20 @@ function addSystemMsg(text) {
 }
 
 function updateOnlineCount(n) {
-  document.getElementById('onlineCount').textContent          = n;
+  document.getElementById('onlineCount').textContent = n;
   document.getElementById('onlineCountLandscape').textContent = n;
 }
 
 function escapeHtml(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if (!t) return '';
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-// ─── Clear unread when user clicks chat panel ───────────
+// ─── Clear unread when chat focused ─────────────────────────────
 document.getElementById('messageList').addEventListener('scroll', clearUnread);
-document.getElementById('chatPanel').addEventListener('click', clearUnread);
+document.getElementById('chatView').addEventListener('click', clearUnread);
 
-// ─── Enter key on join screen ───────────────────────────
+// ─── Enter on join screen ────────────────────────────────────────
 document.getElementById('nameInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('roomInput').focus(); });
 document.getElementById('roomInput').addEventListener('keydown', e => { if(e.key==='Enter') joinRoom(); });
 </script>
