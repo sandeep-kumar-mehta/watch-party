@@ -2,163 +2,428 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Watch Party 🎬</title>
   <style>
+    /* ════════════════════════════════════════
+       RESET & BASE
+    ════════════════════════════════════════ */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e8e8f0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f0f13; color: #e8e8f0; overflow-x: hidden; }
 
-    /* ── JOIN SCREEN ── */
-    #joinScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:20px; }
-    .join-card { background:#1a1a24; border:1px solid #2a2a3a; border-radius:16px; padding:36px 28px; width:100%; max-width:380px; text-align:center; }
-    .join-card h1 { font-size:26px; margin-bottom:6px; }
-    .join-card > p { color:#888; font-size:13px; margin-bottom:24px; }
-    .join-card input { width:100%; padding:11px 14px; background:#252535; border:1px solid #333; border-radius:10px; color:#fff; font-size:14px; margin-bottom:10px; outline:none; }
-    .join-card input:focus { border-color:#6c63ff; }
-    .btn-primary { width:100%; padding:12px; background:#6c63ff; color:white; border:none; border-radius:10px; font-size:14px; cursor:pointer; font-weight:500; margin-bottom:8px; }
-    .btn-primary:hover { background:#5a52e0; }
-    .btn-secondary { width:100%; padding:11px; background:#252535; color:#ccc; border:1px solid #333; border-radius:10px; font-size:14px; cursor:pointer; }
-    .btn-secondary:hover { background:#2e2e45; }
-    .divider { margin:14px 0; color:#444; font-size:12px; }
+    /* ════════════════════════════════════════
+       JOIN SCREEN
+    ════════════════════════════════════════ */
+    #joinScreen {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 20px;
+    }
+    .join-card {
+      background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 16px;
+      padding: 36px 28px; width: 100%; max-width: 380px; text-align: center;
+    }
+    .join-card h1 { font-size: 26px; margin-bottom: 6px; }
+    .join-card > p { color: #888; font-size: 13px; margin-bottom: 24px; }
+    .join-card input {
+      width: 100%; padding: 11px 14px; background: #252535; border: 1px solid #333;
+      border-radius: 10px; color: #fff; font-size: 14px; margin-bottom: 10px; outline: none;
+    }
+    .join-card input:focus { border-color: #6c63ff; }
+    .btn-primary {
+      width: 100%; padding: 12px; background: #6c63ff; color: white; border: none;
+      border-radius: 10px; font-size: 14px; cursor: pointer; font-weight: 500; margin-bottom: 8px;
+    }
+    .btn-primary:hover { background: #5a52e0; }
+    .btn-secondary {
+      width: 100%; padding: 11px; background: #252535; color: #ccc;
+      border: 1px solid #333; border-radius: 10px; font-size: 14px; cursor: pointer;
+    }
+    .btn-secondary:hover { background: #2e2e45; }
+    .divider { margin: 14px 0; color: #444; font-size: 12px; }
 
-    /* ── APP SCREEN ── */
-    #appScreen { display:none; flex-direction:column; min-height:100vh; }
-    .topbar { padding:10px 16px; background:#1a1a24; border-bottom:1px solid #2a2a3a; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:10; }
-    .topbar h2 { font-size:15px; font-weight:600; white-space:nowrap; }
-    .room-badge { background:#252535; border:1px solid #333; border-radius:20px; padding:4px 12px; font-size:12px; color:#aaa; cursor:pointer; }
-    .room-badge span { color:#6c63ff; font-weight:600; }
-    .online-pill { margin-left:auto; background:#1a3a1a; color:#4caf50; border-radius:20px; padding:4px 10px; font-size:12px; white-space:nowrap; }
-    .live-dot { width:7px; height:7px; background:#4caf50; border-radius:50%; display:inline-block; margin-right:4px; animation:pulse 1.5s infinite; }
+    /* ════════════════════════════════════════
+       APP SCREEN
+    ════════════════════════════════════════ */
+    #appScreen { display: none; flex-direction: column; min-height: 100vh; }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      padding: 10px 16px; background: #1a1a24; border-bottom: 1px solid #2a2a3a;
+      display: flex; align-items: center; gap: 10px;
+      position: sticky; top: 0; z-index: 20;
+    }
+    .topbar h2 { font-size: 15px; font-weight: 600; white-space: nowrap; }
+    .room-badge {
+      background: #252535; border: 1px solid #333; border-radius: 20px;
+      padding: 4px 12px; font-size: 12px; color: #aaa; cursor: pointer;
+    }
+    .room-badge span { color: #6c63ff; font-weight: 600; }
+    .online-pill {
+      margin-left: auto; background: #1a3a1a; color: #4caf50;
+      border-radius: 20px; padding: 4px 10px; font-size: 12px; white-space: nowrap;
+    }
+    .live-dot {
+      width: 7px; height: 7px; background: #4caf50; border-radius: 50%;
+      display: inline-block; margin-right: 4px; animation: pulse 1.5s infinite;
+    }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-    /* ── LAYOUT ── */
-    .main-area { display:flex; flex:1; }
-    .video-area { flex:1; display:flex; flex-direction:column; min-width:0; }
+    /* Chat toggle button — shows on mobile, hidden on desktop */
+    .chat-toggle-btn {
+      display: none; background: #252535; border: 1px solid #333; border-radius: 8px;
+      padding: 6px 10px; color: #ccc; font-size: 13px; cursor: pointer;
+      position: relative; flex-shrink: 0;
+    }
+    /* Notification badge on chat button */
+    .notif-badge {
+      position: absolute; top: -6px; right: -6px;
+      background: #ff4545; color: #fff; border-radius: 50%;
+      width: 18px; height: 18px; font-size: 10px; font-weight: 700;
+      display: none; align-items: center; justify-content: center;
+      border: 2px solid #0f0f13;
+    }
+    .notif-badge.show { display: flex; }
 
-    /* ── UPLOAD MODAL ── */
-    .upload-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:100; align-items:center; justify-content:center; padding:16px; }
-    .upload-overlay.show { display:flex; }
-    .upload-modal { background:#1a1a24; border:1px solid #2a2a3a; border-radius:16px; padding:24px; width:100%; max-width:440px; max-height:90vh; overflow-y:auto; }
-    .upload-modal h3 { font-size:16px; font-weight:600; margin-bottom:4px; }
-    .upload-modal > p { font-size:12px; color:#888; margin-bottom:16px; }
-    .upload-tabs { display:flex; gap:8px; margin-bottom:16px; }
-    .tab-btn { flex:1; padding:9px; background:#252535; border:1px solid #333; border-radius:8px; color:#aaa; font-size:13px; cursor:pointer; }
-    .tab-btn.active { background:#6c63ff; border-color:#6c63ff; color:#fff; }
-    .tab-content { display:none; }
-    .tab-content.active { display:block; }
+    /* ── MAIN AREA ── */
+    .main-area { display: flex; flex: 1; }
+    .video-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
-    /* Cloudinary tab */
-    .cloud-drop { border:2px dashed #333; border-radius:12px; padding:28px 20px; text-align:center; cursor:pointer; margin-bottom:12px; }
-    .cloud-drop:hover,.cloud-drop.dragover { border-color:#6c63ff; background:#1e1e30; }
-    .cloud-drop .icon { font-size:30px; margin-bottom:8px; }
-    .cloud-drop p { font-size:13px; color:#888; }
-    .cloud-drop p span { color:#6c63ff; }
-    .progress-upload { display:none; background:#252535; border-radius:8px; padding:12px; margin-bottom:12px; }
-    .progress-upload p { font-size:12px; color:#aaa; margin-bottom:8px; }
-    .progress-upload-bar { height:6px; background:#333; border-radius:3px; }
-    .progress-upload-fill { height:100%; background:#6c63ff; border-radius:3px; width:0%; transition:width 0.3s; }
-    .config-row { display:flex; gap:8px; margin-bottom:12px; }
-    .config-row > div { flex:1; }
-    .config-row label { font-size:11px; color:#888; display:block; margin-bottom:4px; }
-    .config-row input { width:100%; padding:8px 10px; background:#252535; border:1px solid #333; border-radius:8px; color:#fff; font-size:13px; outline:none; }
-    .config-row input:focus { border-color:#6c63ff; }
-    .hint-box { background:#1e1e2e; border-radius:8px; padding:12px; font-size:11px; color:#666; margin-bottom:12px; line-height:1.6; }
-    .hint-box b { color:#aaa; }
-    .hint-box a { color:#6c63ff; }
+    /* ════════════════════════════════════════
+       UPLOAD MODAL
+    ════════════════════════════════════════ */
+    .upload-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8); z-index: 200; align-items: center;
+      justify-content: center; padding: 16px;
+    }
+    .upload-overlay.show { display: flex; }
+    .upload-modal {
+      background: #1a1a24; border: 1px solid #2a2a3a; border-radius: 16px;
+      padding: 24px; width: 100%; max-width: 440px; max-height: 90vh; overflow-y: auto;
+    }
+    .upload-modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .upload-modal > p { font-size: 12px; color: #888; margin-bottom: 16px; }
+    .upload-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn {
+      flex: 1; padding: 9px; background: #252535; border: 1px solid #333;
+      border-radius: 8px; color: #aaa; font-size: 13px; cursor: pointer;
+    }
+    .tab-btn.active { background: #6c63ff; border-color: #6c63ff; color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .cloud-drop {
+      border: 2px dashed #333; border-radius: 12px; padding: 28px 20px;
+      text-align: center; cursor: pointer; margin-bottom: 12px;
+    }
+    .cloud-drop:hover, .cloud-drop.dragover { border-color: #6c63ff; background: #1e1e30; }
+    .cloud-drop .icon { font-size: 30px; margin-bottom: 8px; }
+    .cloud-drop p { font-size: 13px; color: #888; }
+    .cloud-drop p span { color: #6c63ff; }
+    .progress-upload { display: none; background: #252535; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .progress-upload p { font-size: 12px; color: #aaa; margin-bottom: 8px; }
+    .progress-upload-bar { height: 6px; background: #333; border-radius: 3px; }
+    .progress-upload-fill { height: 100%; background: #6c63ff; border-radius: 3px; width: 0%; transition: width 0.3s; }
+    .config-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .config-row > div { flex: 1; }
+    .config-row label { font-size: 11px; color: #888; display: block; margin-bottom: 4px; }
+    .config-row input {
+      width: 100%; padding: 8px 10px; background: #252535; border: 1px solid #333;
+      border-radius: 8px; color: #fff; font-size: 13px; outline: none;
+    }
+    .config-row input:focus { border-color: #6c63ff; }
+    .hint-box {
+      background: #1e1e2e; border-radius: 8px; padding: 12px;
+      font-size: 11px; color: #666; margin-bottom: 12px; line-height: 1.6;
+    }
+    .hint-box b { color: #aaa; }
+    .hint-box a { color: #6c63ff; }
+    .url-input-wrap { margin-bottom: 12px; }
+    .url-input-wrap label { font-size: 12px; color: #888; display: block; margin-bottom: 6px; }
+    .url-input-wrap input {
+      width: 100%; padding: 10px 12px; background: #252535; border: 1px solid #333;
+      border-radius: 8px; color: #fff; font-size: 13px; outline: none;
+    }
+    .url-input-wrap input:focus { border-color: #6c63ff; }
+    .drive-notice {
+      background: #1a2a1a; border: 1px solid #2a4a2a; border-radius: 8px;
+      padding: 10px 12px; font-size: 11px; color: #7fc97f;
+      margin-bottom: 10px; line-height: 1.6; display: none;
+    }
+    .drive-notice.show { display: block; }
+    .modal-close {
+      width: 100%; padding: 10px; background: none; border: 1px solid #333;
+      border-radius: 8px; color: #888; font-size: 13px; cursor: pointer; margin-top: 4px;
+    }
+    .modal-close:hover { background: #252535; }
 
-    /* URL tab */
-    .url-input-wrap { margin-bottom:12px; }
-    .url-input-wrap label { font-size:12px; color:#888; display:block; margin-bottom:6px; }
-    .url-input-wrap input { width:100%; padding:10px 12px; background:#252535; border:1px solid #333; border-radius:8px; color:#fff; font-size:13px; outline:none; }
-    .url-input-wrap input:focus { border-color:#6c63ff; }
+    /* ════════════════════════════════════════
+       VIDEO CONTAINER
+    ════════════════════════════════════════ */
+    .video-container {
+      flex: 1; background: #000; position: relative;
+      display: flex; align-items: center; justify-content: center; min-height: 260px;
+    }
+    #mainVideo { width: 100%; height: 100%; object-fit: contain; display: none; }
+    #driveFrame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; display: none; }
 
-    /* Google Drive notice banner */
-    .drive-notice { background:#1a2a1a; border:1px solid #2a4a2a; border-radius:8px; padding:10px 12px; font-size:11px; color:#7fc97f; margin-bottom:10px; line-height:1.6; display:none; }
-    .drive-notice.show { display:block; }
+    .drive-banner {
+      display: none; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      background: rgba(108,99,255,0.85); color: #fff; font-size: 11px;
+      padding: 4px 14px; border-radius: 20px; z-index: 5; white-space: nowrap; pointer-events: none;
+    }
+    .drive-banner.show { display: block; }
 
-    .modal-close { width:100%; padding:10px; background:none; border:1px solid #333; border-radius:8px; color:#888; font-size:13px; cursor:pointer; margin-top:4px; }
-    .modal-close:hover { background:#252535; }
-
-    /* ── VIDEO AREA ── */
-    .video-container { flex:1; background:#000; position:relative; display:flex; align-items:center; justify-content:center; min-height:260px; }
-    #mainVideo { width:100%; height:100%; object-fit:contain; display:none; }
-
-    /* Google Drive iframe */
-    #driveFrame { position:absolute; top:0; left:0; width:100%; height:100%; border:none; display:none; }
-
-    /* Drive banner shown over video area when iframe is active */
-    .drive-banner { display:none; position:absolute; top:8px; left:50%; transform:translateX(-50%); background:rgba(108,99,255,0.85); color:#fff; font-size:11px; padding:4px 14px; border-radius:20px; z-index:5; white-space:nowrap; pointer-events:none; }
-    .drive-banner.show { display:block; }
-
-    .video-placeholder { display:flex; flex-direction:column; align-items:center; gap:12px; color:#555; padding:20px; text-align:center; }
-    .video-placeholder .icon { width:68px; height:68px; background:#1a1a24; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; border:1px solid #2a2a3a; }
-    .video-placeholder p { font-size:13px; line-height:1.6; }
-    .video-placeholder button { background:#6c63ff; color:white; border:none; border-radius:8px; padding:10px 20px; font-size:13px; cursor:pointer; }
-    .video-placeholder button:hover { background:#5a52e0; }
-
-    /* Floating reactions */
-    .reaction-float { position:absolute; font-size:28px; pointer-events:none; animation:floatUp 2s ease forwards; }
+    .video-placeholder {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 12px; color: #555; padding: 20px; text-align: center;
+    }
+    .video-placeholder .icon {
+      width: 68px; height: 68px; background: #1a1a24; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; border: 1px solid #2a2a3a;
+    }
+    .video-placeholder p { font-size: 13px; line-height: 1.6; }
+    .video-placeholder button {
+      background: #6c63ff; color: white; border: none;
+      border-radius: 8px; padding: 10px 20px; font-size: 13px; cursor: pointer;
+    }
+    .reaction-float {
+      position: absolute; font-size: 28px; pointer-events: none;
+      animation: floatUp 2s ease forwards;
+    }
     @keyframes floatUp { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-120px) scale(1.4)} }
+    .loading-overlay {
+      display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7); align-items: center; justify-content: center;
+      flex-direction: column; gap: 12px; z-index: 3;
+    }
+    .loading-overlay.show { display: flex; }
+    .spinner {
+      width: 38px; height: 38px; border: 3px solid #333;
+      border-top-color: #6c63ff; border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Loading spinner */
-    .loading-overlay { display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; flex-direction:column; gap:12px; z-index:3; }
-    .loading-overlay.show { display:flex; }
-    .spinner { width:38px; height:38px; border:3px solid #333; border-top-color:#6c63ff; border-radius:50%; animation:spin 0.8s linear infinite; }
-    @keyframes spin { to{transform:rotate(360deg)} }
+    /* ─── PROGRESS BAR ─── */
+    .progress-bar-wrap { padding: 7px 14px 4px; background: #151520; }
+    .progress-bar { height: 5px; background: #2a2a3a; border-radius: 3px; cursor: pointer; }
+    .progress-fill { height: 100%; background: #6c63ff; border-radius: 3px; width: 0%; pointer-events: none; }
+    .progress-bar-wrap.drive-mode { opacity: 0.25; pointer-events: none; }
 
-    /* Progress bar — hidden for Drive (iframe) */
-    .progress-bar-wrap { padding:7px 14px 4px; background:#151520; }
-    .progress-bar { height:5px; background:#2a2a3a; border-radius:3px; cursor:pointer; }
-    .progress-fill { height:100%; background:#6c63ff; border-radius:3px; width:0%; pointer-events:none; }
-    .progress-bar-wrap.drive-mode { opacity:0.25; pointer-events:none; }
+    /* ─── CONTROLS ─── */
+    .controls {
+      padding: 8px 14px; background: #151520; border-top: 1px solid #1e1e2e;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .ctrl-btn {
+      background: #252535; border: 1px solid #333; border-radius: 8px;
+      padding: 7px 12px; color: #ccc; font-size: 12px; cursor: pointer;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .ctrl-btn:hover { background: #2e2e45; color: #fff; }
+    .ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .time-info { font-size: 12px; color: #666; margin-left: auto; font-variant-numeric: tabular-nums; }
 
-    /* Controls */
-    .controls { padding:8px 14px; background:#151520; border-top:1px solid #1e1e2e; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    .ctrl-btn { background:#252535; border:1px solid #333; border-radius:8px; padding:7px 12px; color:#ccc; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px; }
-    .ctrl-btn:hover { background:#2e2e45; color:#fff; }
-    .ctrl-btn:disabled { opacity:0.35; cursor:not-allowed; }
-    .time-info { font-size:12px; color:#666; margin-left:auto; font-variant-numeric:tabular-nums; }
+    /* ─── REACTIONS BAR ─── */
+    .reactions-bar {
+      display: flex; gap: 6px; padding: 7px 14px; background: #151520;
+      border-top: 1px solid #1e1e2e; flex-wrap: wrap; align-items: center;
+    }
+    .react-btn {
+      background: #1e1e2e; border: 1px solid #2a2a3a;
+      border-radius: 20px; padding: 4px 12px; font-size: 15px; cursor: pointer;
+    }
+    .react-btn:hover { transform: scale(1.2); }
 
-    /* Reactions */
-    .reactions-bar { display:flex; gap:6px; padding:7px 14px; background:#151520; border-top:1px solid #1e1e2e; flex-wrap:wrap; align-items:center; }
-    .react-btn { background:#1e1e2e; border:1px solid #2a2a3a; border-radius:20px; padding:4px 12px; font-size:15px; cursor:pointer; }
-    .react-btn:hover { transform:scale(1.2); }
+    /* ════════════════════════════════════════
+       CHAT PANEL — portrait (sidebar)
+    ════════════════════════════════════════ */
+    .chat-panel {
+      width: 280px; border-left: 1px solid #2a2a3a;
+      display: flex; flex-direction: column; background: #13131e;
+      transition: transform 0.3s ease;
+    }
+    .chat-title {
+      padding: 11px 14px; border-bottom: 1px solid #2a2a3a;
+      font-size: 13px; font-weight: 500; color: #aaa;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    /* Unread dot inside panel title */
+    .chat-title-badge {
+      background: #ff4545; color: #fff; border-radius: 12px;
+      padding: 1px 7px; font-size: 10px; font-weight: 700; display: none;
+    }
+    .chat-title-badge.show { display: inline-block; }
 
-    /* ── CHAT PANEL ── */
-    .chat-panel { width:280px; border-left:1px solid #2a2a3a; display:flex; flex-direction:column; background:#13131e; }
-    .chat-title { padding:11px 14px; border-bottom:1px solid #2a2a3a; font-size:13px; font-weight:500; color:#aaa; }
-    .messages { flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:9px; scrollbar-width:thin; scrollbar-color:#2a2a3a transparent; }
-    .msg { display:flex; gap:8px; animation:fadeIn 0.2s ease; }
+    .messages {
+      flex: 1; overflow-y: auto; padding: 10px;
+      display: flex; flex-direction: column; gap: 9px;
+      scrollbar-width: thin; scrollbar-color: #2a2a3a transparent;
+    }
+    .msg { display: flex; gap: 8px; animation: fadeIn 0.2s ease; }
     @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:none} }
-    .avatar { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; flex-shrink:0; }
-    .avatar.me { background:#2d2060; color:#9d8fff; }
-    .avatar.other { background:#1e3a20; color:#6fcf97; }
-    .msg-body { flex:1; min-width:0; }
-    .msg-name { font-size:11px; color:#666; margin-bottom:2px; }
-    .msg-text { font-size:13px; color:#ddd; line-height:1.4; word-break:break-word; }
-    .msg-time { font-size:10px; color:#444; margin-top:2px; }
-    .system-msg { font-size:11px; color:#555; text-align:center; padding:3px 0; font-style:italic; }
-    .chat-input-wrap { padding:9px; border-top:1px solid #2a2a3a; display:flex; gap:7px; }
-    .chat-input { flex:1; padding:8px 11px; background:#1e1e2e; border:1px solid #2a2a3a; border-radius:18px; color:#eee; font-size:13px; outline:none; font-family:inherit; resize:none; max-height:80px; line-height:1.4; }
-    .chat-input:focus { border-color:#6c63ff; }
-    .send-btn { background:#6c63ff; border:none; border-radius:50%; width:34px; height:34px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; align-self:flex-end; }
-    .send-btn:hover { background:#5a52e0; }
+    .avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 600; flex-shrink: 0;
+    }
+    .avatar.me     { background: #2d2060; color: #9d8fff; }
+    .avatar.other  { background: #1e3a20; color: #6fcf97; }
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-name  { font-size: 11px; color: #666; margin-bottom: 2px; }
+    .msg-text  { font-size: 13px; color: #ddd; line-height: 1.4; word-break: break-word; }
+    .msg-time  { font-size: 10px; color: #444; margin-top: 2px; }
+    .system-msg { font-size: 11px; color: #555; text-align: center; padding: 3px 0; font-style: italic; }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width:768px) {
-      body { overflow-y:auto; }
-      #appScreen { flex-direction:column; }
-      .main-area { flex-direction:column; }
-      .video-container { min-height:210px; }
-      .chat-panel { width:100%; border-left:none; border-top:1px solid #2a2a3a; height:320px; }
-      .topbar h2 { font-size:13px; }
-      .ctrl-btn { font-size:11px; padding:6px 9px; }
+    .chat-input-wrap {
+      padding: 9px; border-top: 1px solid #2a2a3a; display: flex; gap: 7px;
+    }
+    .chat-input {
+      flex: 1; padding: 8px 11px; background: #1e1e2e; border: 1px solid #2a2a3a;
+      border-radius: 18px; color: #eee; font-size: 13px; outline: none;
+      font-family: inherit; resize: none; max-height: 80px; line-height: 1.4;
+    }
+    .chat-input:focus { border-color: #6c63ff; }
+    .send-btn {
+      background: #6c63ff; border: none; border-radius: 50%;
+      width: 34px; height: 34px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; align-self: flex-end;
+    }
+    .send-btn:hover { background: #5a52e0; }
+
+    /* ════════════════════════════════════════
+       CHAT NOTIFICATION TOAST
+       (pops at top-right when chat is hidden)
+    ════════════════════════════════════════ */
+    .chat-toast {
+      position: fixed; top: 60px; right: 12px; z-index: 300;
+      background: #1e1e2e; border: 1px solid #6c63ff; border-radius: 12px;
+      padding: 10px 14px; max-width: 240px; font-size: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      display: none; flex-direction: column; gap: 3px;
+      animation: slideIn 0.25s ease;
+    }
+    .chat-toast.show { display: flex; }
+    @keyframes slideIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
+    .toast-name { font-weight: 600; color: #9d8fff; font-size: 11px; }
+    .toast-text { color: #ddd; }
+
+    /* ════════════════════════════════════════
+       LANDSCAPE MODE — video fullscreen +
+       chat slides over video as overlay
+    ════════════════════════════════════════ */
+
+    /* Landscape chat overlay — hidden by default */
+    .landscape-chat-overlay {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      height: 55%; z-index: 100; pointer-events: none;
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 70%, transparent 100%);
+      flex-direction: column; justify-content: flex-end;
+    }
+    /* Landscape message list (inside overlay) */
+    .landscape-messages {
+      flex: 1; overflow: hidden; padding: 8px 12px; display: flex;
+      flex-direction: column; gap: 6px; justify-content: flex-end;
+    }
+    .landscape-msg {
+      font-size: 12px; line-height: 1.4;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      animation: fadeIn 0.2s ease;
+      pointer-events: none;
+    }
+    .landscape-msg .lm-name { font-weight: 600; color: #9d8fff; margin-right: 5px; }
+    .landscape-msg .lm-text { color: #fff; }
+    /* Landscape chat input row */
+    .landscape-input-row {
+      display: flex; gap: 8px; padding: 8px 12px 10px;
+      pointer-events: all;
+    }
+    .landscape-input {
+      flex: 1; padding: 7px 12px; background: rgba(30,30,46,0.85);
+      border: 1px solid #6c63ff; border-radius: 18px; color: #eee;
+      font-size: 12px; outline: none; font-family: inherit;
+    }
+    .landscape-send {
+      background: #6c63ff; border: none; border-radius: 50%;
+      width: 32px; height: 32px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .landscape-send:hover { background: #5a52e0; }
+
+    /* Rotate hint shown in portrait on mobile */
+    .rotate-hint {
+      display: none; position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      background: rgba(108,99,255,0.85); color: #fff; font-size: 11px;
+      padding: 6px 16px; border-radius: 20px; z-index: 50;
+      animation: fadeInOut 3s ease forwards; pointer-events: none;
+    }
+    @keyframes fadeInOut { 0%{opacity:0} 10%{opacity:1} 80%{opacity:1} 100%{opacity:0} }
+
+    /* ════════════════════════════════════════
+       RESPONSIVE — portrait mobile
+    ════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      body { overflow-y: auto; }
+      #appScreen { flex-direction: column; }
+      .main-area { flex-direction: column; }
+      .video-container { min-height: 210px; }
+
+      /* Hide sidebar chat on mobile */
+      .chat-panel { display: none; }
+
+      /* Show toggle button in topbar */
+      .chat-toggle-btn { display: flex; align-items: center; gap: 5px; }
+
+      /* When chat is slid open on portrait */
+      .chat-panel.mobile-open {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+        width: 100%; height: 55%; z-index: 150;
+        border-left: none; border-top: 1px solid #2a2a3a;
+      }
+
+      .topbar h2 { font-size: 13px; }
+      .ctrl-btn { font-size: 11px; padding: 6px 9px; }
+    }
+
+    /* ════════════════════════════════════════
+       LANDSCAPE MOBILE ACTIVE STATE
+    ════════════════════════════════════════ */
+    body.landscape-mode #appScreen {
+      flex-direction: row; height: 100vh; overflow: hidden;
+    }
+    body.landscape-mode .topbar { display: none; }        /* hide topbar to save space */
+    body.landscape-mode .chat-panel { display: none; }    /* hide sidebar */
+    body.landscape-mode .main-area { flex: 1; }
+    body.landscape-mode .video-area { flex: 1; }
+    body.landscape-mode .video-container { min-height: unset; flex: 1; }
+    body.landscape-mode .progress-bar-wrap,
+    body.landscape-mode .controls,
+    body.landscape-mode .reactions-bar { padding-left: 8px; padding-right: 8px; }
+    body.landscape-mode .landscape-chat-overlay { display: flex; }  /* show overlay */
+    body.landscape-mode .chat-panel.mobile-open { display: none; } /* hide portrait drawer */
+
+    /* Floating back button in landscape (top-left) */
+    .landscape-topbar {
+      display: none; position: fixed; top: 8px; left: 8px; z-index: 110;
+      gap: 8px; align-items: center;
+    }
+    body.landscape-mode .landscape-topbar { display: flex; }
+    .landscape-topbar-btn {
+      background: rgba(30,30,46,0.85); border: 1px solid #333; border-radius: 8px;
+      padding: 5px 10px; color: #ccc; font-size: 11px; cursor: pointer;
+    }
+    .landscape-room-label {
+      background: rgba(108,99,255,0.7); color: #fff; border-radius: 20px;
+      padding: 4px 12px; font-size: 11px;
     }
   </style>
 </head>
 <body>
 
-<!-- ════════════════════ JOIN SCREEN ════════════════════ -->
+<!-- ════════════════════════════════════════
+     JOIN SCREEN
+════════════════════════════════════════ -->
 <div id="joinScreen">
   <div class="join-card">
     <h1>🎬 Watch Party</h1>
@@ -172,18 +437,19 @@
   </div>
 </div>
 
-<!-- ════════════════════ UPLOAD MODAL ════════════════════ -->
+<!-- ════════════════════════════════════════
+     UPLOAD MODAL
+════════════════════════════════════════ -->
 <div class="upload-overlay" id="uploadOverlay">
   <div class="upload-modal">
     <h3>📹 Video Add Karo</h3>
     <p>Ek baar upload karo — room mein sabko dikhega!</p>
-
     <div class="upload-tabs">
       <button class="tab-btn active" onclick="switchTab('cloudinary')">☁️ Cloudinary Upload</button>
-      <button class="tab-btn" onclick="switchTab('url')">🔗 URL Paste Karo</button>
+      <button class="tab-btn"        onclick="switchTab('url')">🔗 URL Paste Karo</button>
     </div>
 
-    <!-- ── CLOUDINARY TAB ── -->
+    <!-- CLOUDINARY TAB -->
     <div class="tab-content active" id="tab-cloudinary">
       <div class="hint-box">
         <b>Pehli baar? Cloudinary setup karo (free):</b><br>
@@ -193,21 +459,15 @@
         4. Cloud name + preset name neeche daalo
       </div>
       <div class="config-row">
-        <div>
-          <label>Cloud Name</label>
-          <input type="text" id="cloudName" placeholder="e.g. dxyz123abc" />
-        </div>
-        <div>
-          <label>Upload Preset</label>
-          <input type="text" id="uploadPreset" placeholder="e.g. watch_party" />
-        </div>
+        <div><label>Cloud Name</label><input type="text" id="cloudName" placeholder="e.g. dxyz123abc" /></div>
+        <div><label>Upload Preset</label><input type="text" id="uploadPreset" placeholder="e.g. watch_party" /></div>
       </div>
       <div class="cloud-drop" id="cloudDrop"
            ondragover="cloudDragOver(event)" ondragleave="cloudDragLeave()"
            ondrop="cloudDropFile(event)" onclick="document.getElementById('cloudFileInput').click()">
         <div class="icon">📁</div>
         <p>Click karo ya video <span>drag & drop</span> karo<br>
-        <span style="font-size:11px;color:#555;">MP4, WebM — Cloudinary free plan: 25GB storage</span></p>
+        <span style="font-size:11px;color:#555;">MP4, WebM — Cloudinary free: 25GB</span></p>
       </div>
       <input type="file" id="cloudFileInput" accept="video/*" style="display:none" onchange="uploadToCloudinary(event)">
       <div class="progress-upload" id="uploadProgress">
@@ -216,31 +476,26 @@
       </div>
     </div>
 
-    <!-- ── URL TAB ── -->
+    <!-- URL TAB -->
     <div class="tab-content" id="tab-url">
       <div class="hint-box">
         <b>Google Drive se video:</b><br>
         1. Drive pe video upload karo<br>
-        2. File → Share → "Anyone with the link" karo<br>
-        3. Share link copy karo → yahan paste karo ✅<br><br>
-        <b>Direct MP4 URL bhi kaam karta hai</b> (Cloudinary, AWS S3, etc.)<br><br>
-        ⚠️ <b>Google Drive note:</b> Play/Pause sync kaam nahi karega Drive ke saath.
-        Full sync chahiye to Cloudinary use karo.
+        2. Share → "Anyone with the link" karo<br>
+        3. Link copy karo → yahan paste karo ✅<br><br>
+        <b>Direct .mp4 URL bhi kaam karta hai</b> (Cloudinary, S3, etc.)<br><br>
+        ⚠️ <b>Drive note:</b> Play/Pause sync nahi hoga. Full sync = Cloudinary use karo.
       </div>
       <div class="url-input-wrap">
         <label>Video URL paste karo</label>
         <input type="url" id="videoUrlInput"
-               placeholder="https://drive.google.com/file/d/... ya direct .mp4 URL"
-               oninput="checkUrlType(this.value)" />
+          placeholder="https://drive.google.com/file/d/... ya direct .mp4"
+          oninput="checkUrlType(this.value)" />
       </div>
-
-      <!-- Auto-shown when Drive URL is detected -->
       <div class="drive-notice" id="driveNotice">
-        ✅ Google Drive URL detect hua!<br>
-        Auto-convert hoga → iframe embed se chalega.<br>
-        ⚠️ Play/Pause sync sirf Cloudinary/direct URLs pe kaam karta hai.
+        ✅ Google Drive URL detect hua! Auto-convert → iframe embed se chalega.<br>
+        ⚠️ Play/Pause sync sirf direct URLs pe kaam karta hai.
       </div>
-
       <button class="btn-primary" onclick="loadFromUrl()" style="margin-bottom:8px;">Video Load Karo →</button>
     </div>
 
@@ -248,51 +503,86 @@
   </div>
 </div>
 
-<!-- ════════════════════ MAIN APP ════════════════════ -->
+<!-- ════════════════════════════════════════
+     CHAT NOTIFICATION TOAST
+════════════════════════════════════════ -->
+<div class="chat-toast" id="chatToast">
+  <span class="toast-name" id="toastName">User</span>
+  <span class="toast-text" id="toastText">message...</span>
+</div>
+
+<!-- ════════════════════════════════════════
+     LANDSCAPE TOPBAR (floating)
+════════════════════════════════════════ -->
+<div class="landscape-topbar">
+  <button class="landscape-topbar-btn" onclick="copyRoomId()">📋 Room</button>
+  <span class="landscape-room-label" id="landscapeRoomLabel"></span>
+  <span class="online-pill" style="font-size:11px;padding:3px 8px;">
+    <span class="live-dot"></span><span id="onlineCountLandscape">1</span>
+  </span>
+</div>
+
+<!-- ════════════════════════════════════════
+     LANDSCAPE CHAT OVERLAY
+════════════════════════════════════════ -->
+<div class="landscape-chat-overlay" id="landscapeOverlay">
+  <div class="landscape-messages" id="landscapeMessages"></div>
+  <div class="landscape-input-row">
+    <input class="landscape-input" id="landscapeInput"
+           placeholder="Chat karo..." maxlength="200"
+           onkeydown="handleLandscapeKey(event)" />
+    <button class="landscape-send" onclick="sendLandscapeMessage()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ROTATE HINT (portrait mobile)
+════════════════════════════════════════ -->
+<div class="rotate-hint" id="rotateHint">📱 Rotate for theatre mode!</div>
+
+<!-- ════════════════════════════════════════
+     MAIN APP SCREEN
+════════════════════════════════════════ -->
 <div id="appScreen">
   <div class="topbar">
     <h2>🎬 Watch Party</h2>
     <div class="room-badge" onclick="copyRoomId()">Room: <span id="roomIdDisplay"></span> 📋</div>
     <div class="online-pill"><span class="live-dot"></span><span id="onlineCount">1</span> online</div>
+
+    <!-- Mobile chat toggle button -->
+    <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleMobileChat()">
+      💬 Chat
+      <span class="notif-badge" id="notifBadge">0</span>
+    </button>
   </div>
 
   <div class="main-area">
     <div class="video-area">
 
+      <!-- VIDEO CONTAINER -->
       <div class="video-container" id="videoContainer" onclick="handleVideoClick(event)">
-
-        <!-- Normal video element (MP4 / Cloudinary) -->
         <video id="mainVideo"></video>
-
-        <!-- Google Drive iframe (shown only for Drive URLs) -->
         <iframe id="driveFrame" allowfullscreen allow="autoplay"></iframe>
-
-        <!-- Drive mode label -->
         <div class="drive-banner" id="driveBanner">📺 Google Drive — sync limited</div>
-
-        <!-- Empty state placeholder -->
         <div class="video-placeholder" id="placeholder">
           <div class="icon">🎬</div>
           <p>Room mein abhi koi video nahi hai</p>
           <button onclick="openUploadModal()">+ Video Add Karo</button>
         </div>
-
-        <!-- Loading spinner -->
         <div class="loading-overlay" id="loadingOverlay">
           <div class="spinner"></div>
           <p style="font-size:13px;color:#aaa;">Video load ho rahi hai...</p>
         </div>
-
       </div>
 
-      <!-- Progress bar (dim in Drive mode) -->
       <div class="progress-bar-wrap" id="progressBarWrap">
         <div class="progress-bar" onclick="seekVideo(event)">
           <div class="progress-fill" id="progressFill"></div>
         </div>
       </div>
 
-      <!-- Controls -->
       <div class="controls">
         <button class="ctrl-btn" id="playBtn" onclick="togglePlay()">▶ Play</button>
         <button class="ctrl-btn" id="syncBtn" onclick="requestSync()">🔄 Sync</button>
@@ -300,7 +590,6 @@
         <span class="time-info" id="timeDisplay">0:00 / 0:00</span>
       </div>
 
-      <!-- Reaction bar -->
       <div class="reactions-bar">
         <span style="font-size:11px;color:#555;margin-right:4px;">React:</span>
         <button class="react-btn" onclick="sendReaction('😂')">😂</button>
@@ -310,12 +599,14 @@
         <button class="react-btn" onclick="sendReaction('👏')">👏</button>
         <button class="react-btn" onclick="sendReaction('😭')">😭</button>
       </div>
+    </div>
 
-    </div><!-- /video-area -->
-
-    <!-- ── CHAT PANEL ── -->
-    <div class="chat-panel">
-      <div class="chat-title">💬 Live Chat</div>
+    <!-- SIDEBAR CHAT (desktop + portrait tablet) -->
+    <div class="chat-panel" id="chatPanel">
+      <div class="chat-title">
+        💬 Live Chat
+        <span class="chat-title-badge" id="chatTitleBadge">0</span>
+      </div>
       <div class="messages" id="messageList"></div>
       <div class="chat-input-wrap">
         <textarea class="chat-input" id="chatInput" placeholder="Message likho..." rows="1"
@@ -325,489 +616,531 @@
         </button>
       </div>
     </div>
+  </div>
+</div>
 
-  </div><!-- /main-area -->
-</div><!-- /appScreen -->
-
-<!-- Socket.IO client (provided by your Node server) -->
 <script src="/socket.io/socket.io.js"></script>
-
 <script>
-  // ═══════════════════════════════════════════════════════
-  //  STATE
-  // ═══════════════════════════════════════════════════════
-  const socket      = io();
-  let myName        = '';
-  let myRoomId      = '';
-  let isSyncing     = false;
-  let isDriveMode   = false;   // true when iframe (Google Drive) is active
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+const socket      = io();
+let myName        = '';
+let myRoomId      = '';
+let isSyncing     = false;
+let isDriveMode   = false;
+let unreadCount   = 0;       // unread messages when chat is hidden
+let chatVisible   = true;    // is chat panel visible to user?
+let toastTimer    = null;    // auto-hide toast timer
+let isLandscape   = false;   // current orientation
+let mobileDrawerOpen = false;
 
-  const video          = document.getElementById('mainVideo');
-  const driveFrame     = document.getElementById('driveFrame');
-  const driveBanner    = document.getElementById('driveBanner');
-  const placeholder    = document.getElementById('placeholder');
-  const loadingOverlay = document.getElementById('loadingOverlay');
-  const progressBarWrap= document.getElementById('progressBarWrap');
-  const playBtn        = document.getElementById('playBtn');
+// DOM refs
+const video           = document.getElementById('mainVideo');
+const driveFrame      = document.getElementById('driveFrame');
+const driveBanner     = document.getElementById('driveBanner');
+const placeholder     = document.getElementById('placeholder');
+const loadingOverlay  = document.getElementById('loadingOverlay');
+const progressBarWrap = document.getElementById('progressBarWrap');
+const playBtn         = document.getElementById('playBtn');
+const chatPanel       = document.getElementById('chatPanel');
 
-  // ═══════════════════════════════════════════════════════
-  //  JOIN / ROOM
-  // ═══════════════════════════════════════════════════════
-  function generateRoomId() {
-    return Math.random().toString(36).substring(2, 8).toUpperCase();
-  }
+// ═══════════════════════════════════════════════════════
+//  JOIN / ROOM
+// ═══════════════════════════════════════════════════════
+function generateRoomId() { return Math.random().toString(36).substring(2,8).toUpperCase(); }
 
-  function createRoom() {
-    const name = document.getElementById('nameInput').value.trim();
-    if (!name) { alert('Naam likho!'); return; }
-    document.getElementById('roomInput').value = generateRoomId();
-    joinRoom();
-  }
+function createRoom() {
+  const name = document.getElementById('nameInput').value.trim();
+  if (!name) { alert('Naam likho!'); return; }
+  document.getElementById('roomInput').value = generateRoomId();
+  joinRoom();
+}
 
-  function joinRoom() {
-    const name   = document.getElementById('nameInput').value.trim();
-    const roomId = document.getElementById('roomInput').value.trim().toUpperCase();
-    if (!name)   { alert('Naam likho!'); return; }
-    if (!roomId) { alert('Room ID likho ya Naya Room banao!'); return; }
-    myName   = name;
-    myRoomId = roomId;
-    socket.emit('join-room', { roomId, userName: name });
-    document.getElementById('joinScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display  = 'flex';
-    document.getElementById('roomIdDisplay').textContent = roomId;
-  }
+function joinRoom() {
+  const name   = document.getElementById('nameInput').value.trim();
+  const roomId = document.getElementById('roomInput').value.trim().toUpperCase();
+  if (!name)   { alert('Naam likho!'); return; }
+  if (!roomId) { alert('Room ID likho ya Naya Room banao!'); return; }
+  myName = name; myRoomId = roomId;
+  socket.emit('join-room', { roomId, userName: name });
+  document.getElementById('joinScreen').style.display   = 'none';
+  document.getElementById('appScreen').style.display    = 'flex';
+  document.getElementById('roomIdDisplay').textContent  = roomId;
+  document.getElementById('landscapeRoomLabel').textContent = roomId;
 
-  function copyRoomId() {
-    navigator.clipboard.writeText(myRoomId)
-      .then(() => alert('Room ID copy hua: ' + myRoomId + '\nDost ko bhejo!'));
-  }
+  // Show rotate hint on mobile after joining
+  if (window.innerWidth <= 768) showRotateHint();
+}
 
-  // ═══════════════════════════════════════════════════════
-  //  SOCKET EVENTS
-  // ═══════════════════════════════════════════════════════
-  socket.on('join-confirmed', ({ users, videoUrl, videoName }) => {
-    updateOnlineCount(users.length);
-    addSystemMsg('✅ Room join ho gaya! (' + users.length + ' online)');
-    if (videoUrl) {
-      addSystemMsg('📹 Room mein video hai — load ho rahi hai...');
-      loadVideoUrl(videoUrl, videoName, false);
-    }
-  });
+function copyRoomId() {
+  navigator.clipboard.writeText(myRoomId)
+    .then(() => alert('Room ID copy hua: ' + myRoomId + '\nDost ko bhejo!'));
+}
 
-  socket.on('user-joined', ({ userName, users }) => {
-    updateOnlineCount(users.length);
-    addSystemMsg('🟢 ' + userName + ' aa gaya! (' + users.length + ' online)');
-  });
-
-  socket.on('user-left', ({ userName, users }) => {
-    updateOnlineCount(users.length);
-    addSystemMsg('🔴 ' + userName + ' chala gaya (' + users.length + ' online)');
-  });
-
-  socket.on('chat-message', ({ userName, message, time }) => {
-    addMsg(userName, userName === myName ? 'me' : 'other', message, time);
-  });
-
-  socket.on('reaction', ({ emoji, userName }) => {
-    showFloatingReaction(emoji);
-    addSystemMsg(userName + ': ' + emoji);
-  });
-
-  socket.on('video-changed', ({ videoUrl, videoName, userName }) => {
-    addSystemMsg('📹 ' + userName + ' ne "' + videoName + '" set kiya');
+// ═══════════════════════════════════════════════════════
+//  SOCKET EVENTS
+// ═══════════════════════════════════════════════════════
+socket.on('join-confirmed', ({ users, videoUrl, videoName }) => {
+  updateOnlineCount(users.length);
+  addSystemMsg('✅ Room join ho gaya! (' + users.length + ' online)');
+  if (videoUrl) {
+    addSystemMsg('📹 Room mein video hai — load ho rahi hai...');
     loadVideoUrl(videoUrl, videoName, false);
-  });
+  }
+});
 
-  socket.on('video-play', ({ currentTime, userName }) => {
-    if (isDriveMode) { addSystemMsg('▶ ' + userName + ' ne play kiya (Drive sync limited)'); return; }
-    isSyncing = true;
-    video.currentTime = currentTime;
-    video.play().catch(() => {});
+socket.on('user-joined', ({ userName, users }) => {
+  updateOnlineCount(users.length);
+  addSystemMsg('🟢 ' + userName + ' aa gaya! (' + users.length + ' online)');
+});
+
+socket.on('user-left', ({ userName, users }) => {
+  updateOnlineCount(users.length);
+  addSystemMsg('🔴 ' + userName + ' chala gaya (' + users.length + ' online)');
+});
+
+socket.on('chat-message', ({ userName, message, time }) => {
+  addMsg(userName, userName === myName ? 'me' : 'other', message, time);
+  addLandscapeMsg(userName, message); // also add to landscape overlay
+  // Show notification if chat is hidden or user is not looking at it
+  if (!isChatVisible()) {
+    triggerChatNotification(userName, message);
+  }
+});
+
+socket.on('reaction', ({ emoji, userName }) => {
+  showFloatingReaction(emoji);
+  addSystemMsg(userName + ': ' + emoji);
+  addLandscapeMsg('', emoji); // show in landscape overlay too
+});
+
+socket.on('video-changed', ({ videoUrl, videoName, userName }) => {
+  addSystemMsg('📹 ' + userName + ' ne "' + videoName + '" set kiya');
+  loadVideoUrl(videoUrl, videoName, false);
+});
+
+socket.on('video-play', ({ currentTime, userName }) => {
+  if (isDriveMode) { addSystemMsg('▶ ' + userName + ' ne play kiya (Drive sync limited)'); return; }
+  isSyncing = true;
+  video.currentTime = currentTime; video.play().catch(()=>{});
+  updatePlayBtn(true); addSystemMsg('▶ ' + userName + ' ne play kiya');
+  setTimeout(() => isSyncing = false, 600);
+});
+
+socket.on('video-pause', ({ currentTime, userName }) => {
+  if (isDriveMode) { addSystemMsg('⏸ ' + userName + ' ne pause kiya (Drive sync limited)'); return; }
+  isSyncing = true;
+  video.currentTime = currentTime; video.pause();
+  updatePlayBtn(false); addSystemMsg('⏸ ' + userName + ' ne pause kiya');
+  setTimeout(() => isSyncing = false, 600);
+});
+
+socket.on('video-seek', ({ currentTime, userName }) => {
+  if (isDriveMode) return;
+  isSyncing = true;
+  video.currentTime = currentTime;
+  addSystemMsg('⏩ ' + userName + ' → ' + formatTime(currentTime));
+  setTimeout(() => isSyncing = false, 600);
+});
+
+socket.on('sync-state', ({ time, isPlaying }) => {
+  if (isDriveMode) { addSystemMsg('🔄 Sync (Drive mode — seek manually)'); return; }
+  isSyncing = true;
+  video.currentTime = time;
+  if (isPlaying) video.play().catch(()=>{}); else video.pause();
+  updatePlayBtn(isPlaying); addSystemMsg('✅ Sync! ' + formatTime(time));
+  setTimeout(() => isSyncing = false, 600);
+});
+
+// ── AUTO-SYNC HEARTBEAT (every 5s) ────────────────────
+// Keeps server videoTime fresh → late joiners get correct position
+setInterval(() => {
+  if (myRoomId && !isDriveMode && video.src && video.src !== window.location.href && !video.paused) {
+    socket.emit('video-seek', { roomId: myRoomId, currentTime: video.currentTime });
+  }
+}, 5000);
+
+// ═══════════════════════════════════════════════════════
+//  CHAT NOTIFICATION SYSTEM
+// ═══════════════════════════════════════════════════════
+
+// Check if chat panel is actually visible to the user
+function isChatVisible() {
+  if (isLandscape) return true;           // landscape overlay always visible
+  if (window.innerWidth > 768) return true; // desktop sidebar always visible
+  return mobileDrawerOpen;               // mobile: only if drawer is open
+}
+
+// Trigger badge + toast
+function triggerChatNotification(userName, message) {
+  unreadCount++;
+
+  // Update badge on toggle button
+  const badge = document.getElementById('notifBadge');
+  badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+  badge.classList.add('show');
+
+  // Update badge inside chat title
+  const titleBadge = document.getElementById('chatTitleBadge');
+  titleBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+  titleBadge.classList.add('show');
+
+  // Show toast notification
+  showToast(userName, message);
+
+  // Browser tab title blink
+  document.title = '💬 (' + unreadCount + ') Watch Party';
+}
+
+// Show the floating toast popup
+function showToast(name, text) {
+  const toast    = document.getElementById('chatToast');
+  document.getElementById('toastName').textContent = name;
+  document.getElementById('toastText').textContent = text.length > 60 ? text.substring(0, 60) + '...' : text;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000); // auto-hide after 3s
+}
+
+// Clear unread count when user opens chat
+function clearUnread() {
+  unreadCount = 0;
+  document.getElementById('notifBadge').classList.remove('show');
+  document.getElementById('chatTitleBadge').classList.remove('show');
+  document.getElementById('chatToast').classList.remove('show');
+  document.title = '🎬 Watch Party';
+}
+
+// ═══════════════════════════════════════════════════════
+//  MOBILE CHAT DRAWER (portrait)
+// ═══════════════════════════════════════════════════════
+function toggleMobileChat() {
+  mobileDrawerOpen = !mobileDrawerOpen;
+  chatPanel.classList.toggle('mobile-open', mobileDrawerOpen);
+  document.getElementById('chatToggleBtn').textContent = mobileDrawerOpen ? '✕ Close' : '💬 Chat';
+  // Re-add the badge after textContent wipe
+  const badge = document.createElement('span');
+  badge.id = 'notifBadge'; badge.className = 'notif-badge';
+  badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+  if (unreadCount > 0) badge.classList.add('show');
+  document.getElementById('chatToggleBtn').appendChild(badge);
+  if (mobileDrawerOpen) clearUnread();
+}
+
+// ═══════════════════════════════════════════════════════
+//  ORIENTATION / LANDSCAPE MODE
+// ═══════════════════════════════════════════════════════
+function checkOrientation() {
+  const landscape = window.innerWidth > window.innerHeight && window.innerWidth < 1024;
+  if (landscape === isLandscape) return;
+  isLandscape = landscape;
+  document.body.classList.toggle('landscape-mode', landscape);
+  if (landscape) {
+    clearUnread();
+    // Close portrait drawer if open
+    if (mobileDrawerOpen) toggleMobileChat();
+  }
+  updateOnlineCount(parseInt(document.getElementById('onlineCount').textContent) || 1);
+}
+
+window.addEventListener('resize',           checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+checkOrientation(); // run once on load
+
+function showRotateHint() {
+  const hint = document.getElementById('rotateHint');
+  hint.style.display = 'block';
+  setTimeout(() => hint.style.display = 'none', 3200);
+}
+
+// ═══════════════════════════════════════════════════════
+//  LANDSCAPE CHAT MESSAGES
+// ═══════════════════════════════════════════════════════
+const MAX_LANDSCAPE_MSGS = 6; // only last 6 visible at a time in overlay
+
+function addLandscapeMsg(name, text) {
+  const container = document.getElementById('landscapeMessages');
+  const div = document.createElement('div');
+  div.className = 'landscape-msg';
+  if (name) {
+    div.innerHTML = '<span class="lm-name">' + escapeHtml(name) + '</span>'
+                  + '<span class="lm-text">' + escapeHtml(text) + '</span>';
+  } else {
+    // emoji reaction — no name
+    div.innerHTML = '<span class="lm-text" style="font-size:16px">' + text + '</span>';
+  }
+  container.appendChild(div);
+  // Remove old messages to keep overlay clean
+  while (container.children.length > MAX_LANDSCAPE_MSGS) {
+    container.removeChild(container.firstChild);
+  }
+}
+
+function handleLandscapeKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); sendLandscapeMessage(); }
+}
+
+function sendLandscapeMessage() {
+  const inp  = document.getElementById('landscapeInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  socket.emit('chat-message', { roomId: myRoomId, message: text, userName: myName });
+  inp.value = '';
+}
+
+// ═══════════════════════════════════════════════════════
+//  UPLOAD MODAL
+// ═══════════════════════════════════════════════════════
+function openUploadModal()  { document.getElementById('uploadOverlay').classList.add('show'); }
+function closeUploadModal() { document.getElementById('uploadOverlay').classList.remove('show'); }
+
+function switchTab(tab) {
+  const btns = document.querySelectorAll('.tab-btn');
+  btns[0].classList.toggle('active', tab === 'cloudinary');
+  btns[1].classList.toggle('active', tab === 'url');
+  document.getElementById('tab-cloudinary').classList.toggle('active', tab === 'cloudinary');
+  document.getElementById('tab-url').classList.toggle('active', tab === 'url');
+}
+
+function checkUrlType(val) {
+  const isDrive = /drive\.google\.com\/file\/d\//.test(val);
+  document.getElementById('driveNotice').classList.toggle('show', isDrive);
+}
+
+// ═══════════════════════════════════════════════════════
+//  CLOUDINARY UPLOAD
+// ═══════════════════════════════════════════════════════
+function cloudDragOver(e)  { e.preventDefault(); document.getElementById('cloudDrop').classList.add('dragover'); }
+function cloudDragLeave()  { document.getElementById('cloudDrop').classList.remove('dragover'); }
+function cloudDropFile(e)  {
+  e.preventDefault(); cloudDragLeave();
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('video/')) doCloudinaryUpload(f);
+}
+function uploadToCloudinary(event) { const f = event.target.files[0]; if (f) doCloudinaryUpload(f); }
+
+function doCloudinaryUpload(file) {
+  const cloudName = document.getElementById('cloudName').value.trim();
+  const preset    = document.getElementById('uploadPreset').value.trim();
+  if (!cloudName || !preset) {
+    alert('Cloud Name aur Upload Preset daalo!\n\ncloudinary.com pe free account banao');
+    return;
+  }
+  const prog = document.getElementById('uploadProgress');
+  const status = document.getElementById('uploadStatus');
+  const fill   = document.getElementById('uploadFill');
+  prog.style.display = 'block'; status.textContent = 'Uploading... 0%'; fill.style.width = '0%';
+
+  const fd = new FormData();
+  fd.append('file', file); fd.append('upload_preset', preset);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/video/upload');
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) {
+      const pct = Math.round(e.loaded / e.total * 100);
+      fill.style.width = pct + '%'; status.textContent = 'Uploading... ' + pct + '%';
+    }
+  };
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      const res = JSON.parse(xhr.responseText);
+      status.textContent = '✅ Upload ho gaya!'; fill.style.width = '100%';
+      setVideoForRoom(res.secure_url, file.name);
+      setTimeout(closeUploadModal, 1000);
+    } else {
+      status.textContent = '❌ Error! Cloud name/preset check karo';
+    }
+  };
+  xhr.onerror = () => { status.textContent = '❌ Network error'; };
+  xhr.send(fd);
+}
+
+// ═══════════════════════════════════════════════════════
+//  URL LOAD — GOOGLE DRIVE FIX
+// ═══════════════════════════════════════════════════════
+
+// convertDriveUrl → returns "GDRIVE:<embedUrl>" for Drive links
+// WHY: Drive's CORS blocks <video> tag. /preview URL works only in <iframe>
+function convertDriveUrl(url) {
+  const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (match) {
+    const fileId   = match[1];
+    const embedUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
+    return 'GDRIVE:' + embedUrl; // flag for iframe mode
+  }
+  return url; // normal url — use <video>
+}
+
+function loadFromUrl() {
+  let url = document.getElementById('videoUrlInput').value.trim();
+  if (!url) { alert('URL daalo!'); return; }
+  url = convertDriveUrl(url);
+  setVideoForRoom(url, 'Video');
+  closeUploadModal();
+}
+
+// ═══════════════════════════════════════════════════════
+//  VIDEO CORE
+// ═══════════════════════════════════════════════════════
+function setVideoForRoom(url, name) {
+  socket.emit('set-video', { roomId: myRoomId, videoUrl: url, videoName: name });
+  loadVideoUrl(url, name, true);
+}
+
+function loadVideoUrl(url, name, isOwner) {
+  loadingOverlay.classList.add('show');
+  placeholder.style.display = 'none';
+
+  if (url.startsWith('GDRIVE:')) {
+    // ── DRIVE MODE (iframe) ──────────────────────────
+    const embedUrl = url.replace('GDRIVE:', '');
+    isDriveMode = true;
+    video.style.display      = 'none';
+    driveFrame.style.display = 'block';
+    driveFrame.src           = embedUrl;
+    driveBanner.classList.add('show');
+    progressBarWrap.classList.add('drive-mode');
+    playBtn.disabled = true;
+    playBtn.title    = 'Drive mode — iframe controls use karo';
+    document.getElementById('syncBtn').disabled = true;
+    driveFrame.onload = () => {
+      loadingOverlay.classList.remove('show');
+      addSystemMsg('✅ "' + name + '" ready! (Google Drive embed)');
+      addSystemMsg('ℹ️ Drive mode: iframe ke andar play karo');
+    };
+
+  } else {
+    // ── NORMAL VIDEO MODE ────────────────────────────
+    isDriveMode = false;
+    driveFrame.style.display = 'none'; driveFrame.src = '';
+    driveBanner.classList.remove('show');
+    progressBarWrap.classList.remove('drive-mode');
+    playBtn.disabled = false; playBtn.title = '';
+    document.getElementById('syncBtn').disabled = false;
+    video.style.display = 'block';
+    video.src = url; video.load();
+    video.oncanplay = () => {
+      loadingOverlay.classList.remove('show');
+      addSystemMsg('✅ "' + name + '" ready!');
+    };
+    video.onerror = () => {
+      loadingOverlay.classList.remove('show');
+      addSystemMsg('❌ Video load nahi hua — URL check karo');
+      video.style.display = 'none'; placeholder.style.display = 'flex';
+    };
+    video.onloadedmetadata = updateTime;
+    video.ontimeupdate = () => { updateTime(); updateProgress(); };
+  }
+}
+
+function handleVideoClick(e) { if (e.target === video) togglePlay(); }
+
+function togglePlay() {
+  if (isDriveMode) { addSystemMsg('ℹ️ Drive mode: iframe ke andar play/pause karo'); return; }
+  if (!video.src || video.src === window.location.href) { openUploadModal(); return; }
+  if (video.paused) {
+    video.play().catch(()=>{});
+    if (!isSyncing) socket.emit('video-play', { roomId: myRoomId, currentTime: video.currentTime });
     updatePlayBtn(true);
-    addSystemMsg('▶ ' + userName + ' ne play kiya');
-    setTimeout(() => isSyncing = false, 600);
-  });
-
-  socket.on('video-pause', ({ currentTime, userName }) => {
-    if (isDriveMode) { addSystemMsg('⏸ ' + userName + ' ne pause kiya (Drive sync limited)'); return; }
-    isSyncing = true;
-    video.currentTime = currentTime;
+  } else {
     video.pause();
+    if (!isSyncing) socket.emit('video-pause', { roomId: myRoomId, currentTime: video.currentTime });
     updatePlayBtn(false);
-    addSystemMsg('⏸ ' + userName + ' ne pause kiya');
-    setTimeout(() => isSyncing = false, 600);
-  });
-
-  socket.on('video-seek', ({ currentTime, userName }) => {
-    if (isDriveMode) return;
-    isSyncing = true;
-    video.currentTime = currentTime;
-    addSystemMsg('⏩ ' + userName + ' → ' + formatTime(currentTime));
-    setTimeout(() => isSyncing = false, 600);
-  });
-
-  socket.on('sync-state', ({ time, isPlaying }) => {
-    if (isDriveMode) { addSystemMsg('🔄 Sync (Drive mode — seek manually)'); return; }
-    isSyncing = true;
-    video.currentTime = time;
-    if (isPlaying) video.play().catch(() => {}); else video.pause();
-    updatePlayBtn(isPlaying);
-    addSystemMsg('✅ Sync! ' + formatTime(time));
-    setTimeout(() => isSyncing = false, 600);
-  });
-
-  // ═══════════════════════════════════════════════════════
-  //  AUTO-SYNC HEARTBEAT
-  //  Every 5 seconds: tell server current position so late
-  //  joiners get the right timestamp.
-  // ═══════════════════════════════════════════════════════
-  setInterval(() => {
-    if (myRoomId && !isDriveMode && video.src && video.src !== window.location.href && !video.paused) {
-      // Silent position broadcast — server stores it, new joiners get it via request-sync
-      socket.emit('video-seek', { roomId: myRoomId, currentTime: video.currentTime });
-    }
-  }, 5000); // every 5 seconds
-
-  // ═══════════════════════════════════════════════════════
-  //  UPLOAD MODAL
-  // ═══════════════════════════════════════════════════════
-  function openUploadModal()  { document.getElementById('uploadOverlay').classList.add('show'); }
-  function closeUploadModal() { document.getElementById('uploadOverlay').classList.remove('show'); }
-
-  function switchTab(tab) {
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs[0].classList.toggle('active', tab === 'cloudinary');
-    tabs[1].classList.toggle('active', tab === 'url');
-    document.getElementById('tab-cloudinary').classList.toggle('active', tab === 'cloudinary');
-    document.getElementById('tab-url').classList.toggle('active', tab === 'url');
   }
+}
 
-  // URL input — auto-detect Drive URL and show notice
-  function checkUrlType(val) {
-    const isDrive = /drive\.google\.com\/file\/d\//.test(val);
-    document.getElementById('driveNotice').classList.toggle('show', isDrive);
-  }
+function seekVideo(e) {
+  if (isDriveMode || !video.duration) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
+  if (!isSyncing) socket.emit('video-seek', { roomId: myRoomId, currentTime: video.currentTime });
+}
 
-  // ═══════════════════════════════════════════════════════
-  //  CLOUDINARY UPLOAD
-  // ═══════════════════════════════════════════════════════
-  function cloudDragOver(e)  { e.preventDefault(); document.getElementById('cloudDrop').classList.add('dragover'); }
-  function cloudDragLeave()  { document.getElementById('cloudDrop').classList.remove('dragover'); }
-  function cloudDropFile(e)  {
-    e.preventDefault(); cloudDragLeave();
-    const f = e.dataTransfer.files[0];
-    if (f && f.type.startsWith('video/')) doCloudinaryUpload(f);
-  }
-  function uploadToCloudinary(event) {
-    const f = event.target.files[0];
-    if (f) doCloudinaryUpload(f);
-  }
+function requestSync() {
+  if (isDriveMode) { addSystemMsg('ℹ️ Drive mode: sync nahi hoga'); return; }
+  socket.emit('request-sync', { roomId: myRoomId }); addSystemMsg('🔄 Sync maanga...');
+}
 
-  function doCloudinaryUpload(file) {
-    const cloudName = document.getElementById('cloudName').value.trim();
-    const preset    = document.getElementById('uploadPreset').value.trim();
-    if (!cloudName || !preset) {
-      alert('Cloud Name aur Upload Preset daalo!\n\ncloudinary.com pe free account banao\nSettings > Upload > Upload Presets > Add (Unsigned mode)');
-      return;
-    }
-    const prog   = document.getElementById('uploadProgress');
-    const status = document.getElementById('uploadStatus');
-    const fill   = document.getElementById('uploadFill');
-    prog.style.display = 'block';
-    status.textContent = 'Uploading... 0%';
-    fill.style.width   = '0%';
+function updatePlayBtn(playing) { playBtn.textContent = playing ? '⏸ Pause' : '▶ Play'; }
+function updateProgress() {
+  if (video.duration) document.getElementById('progressFill').style.width = (video.currentTime / video.duration * 100) + '%';
+}
+function updateTime() {
+  document.getElementById('timeDisplay').textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration || 0);
+}
+function formatTime(s) {
+  if (!s || isNaN(s)) return '0:00';
+  return Math.floor(s/60) + ':' + (Math.floor(s%60) < 10 ? '0' : '') + Math.floor(s%60);
+}
 
-    const fd = new FormData();
-    fd.append('file', file);
-    fd.append('upload_preset', preset);
+// ═══════════════════════════════════════════════════════
+//  REACTIONS
+// ═══════════════════════════════════════════════════════
+function sendReaction(emoji) {
+  socket.emit('reaction', { roomId: myRoomId, emoji, userName: myName });
+  showFloatingReaction(emoji);
+}
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://api.cloudinary.com/v1_1/' + cloudName + '/video/upload');
+function showFloatingReaction(emoji) {
+  const el = document.createElement('div'); el.className = 'reaction-float'; el.textContent = emoji;
+  const c  = document.getElementById('videoContainer');
+  el.style.left   = (20 + Math.random() * (c.offsetWidth - 80)) + 'px';
+  el.style.bottom = '60px';
+  c.appendChild(el); setTimeout(() => el.remove(), 2100);
+}
 
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) {
-        const pct = Math.round(e.loaded / e.total * 100);
-        fill.style.width   = pct + '%';
-        status.textContent = 'Uploading... ' + pct + '%';
-      }
-    };
+// ═══════════════════════════════════════════════════════
+//  CHAT
+// ═══════════════════════════════════════════════════════
+function sendMessage() {
+  const inp  = document.getElementById('chatInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  socket.emit('chat-message', { roomId: myRoomId, message: text, userName: myName });
+  inp.value = ''; inp.style.height = 'auto';
+}
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const res = JSON.parse(xhr.responseText);
-        status.textContent = '✅ Upload ho gaya!';
-        fill.style.width   = '100%';
-        setVideoForRoom(res.secure_url, file.name);
-        setTimeout(closeUploadModal, 1000);
-      } else {
-        status.textContent    = '❌ Error! Cloud name/preset check karo';
-        prog.style.background = '#2a1a1a';
-      }
-    };
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 80) + 'px'; }
 
-    xhr.onerror = () => { status.textContent = '❌ Network error'; };
-    xhr.send(fd);
-  }
+function addMsg(name, type, text, time) {
+  const t   = time || new Date().toLocaleTimeString('en', { hour:'2-digit', minute:'2-digit' });
+  const div = document.createElement('div'); div.className = 'msg';
+  div.innerHTML =
+    '<div class="avatar ' + type + '">' + name.substring(0,2).toUpperCase() + '</div>' +
+    '<div class="msg-body">' +
+      '<div class="msg-name">' + name + '</div>' +
+      '<div class="msg-text">' + escapeHtml(text) + '</div>' +
+      '<div class="msg-time">' + t + '</div>' +
+    '</div>';
+  const list = document.getElementById('messageList');
+  list.appendChild(div); list.scrollTop = list.scrollHeight;
+}
 
-  // ═══════════════════════════════════════════════════════
-  //  URL LOAD  — the KEY fix for Google Drive
-  // ═══════════════════════════════════════════════════════
+function addSystemMsg(text) {
+  const div = document.createElement('div'); div.className = 'system-msg'; div.textContent = text;
+  const list = document.getElementById('messageList');
+  list.appendChild(div); list.scrollTop = list.scrollHeight;
+}
 
-  /**
-   * convertDriveUrl(url)
-   * --------------------
-   * If it's a Google Drive share link, return "GDRIVE:<embedUrl>"
-   * so loadVideoUrl() knows to use <iframe> instead of <video>.
-   *
-   * Drive share URL format:
-   *   https://drive.google.com/file/d/FILE_ID/view?...
-   * Embed URL format (works in iframe):
-   *   https://drive.google.com/file/d/FILE_ID/preview
-   *
-   * WHY iframe?
-   *   Google Drive sets CORS headers that block <video> src loading.
-   *   The /preview URL is an embeddable page that plays the video
-   *   inside an iframe without CORS issues.
-   */
-  function convertDriveUrl(url) {
-    const match = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
-    if (match) {
-      const fileId   = match[1]; // extract the unique file ID
-      const embedUrl = 'https://drive.google.com/file/d/' + fileId + '/preview';
-      return 'GDRIVE:' + embedUrl; // prefix flags this as Drive mode
-    }
-    return url; // not Drive — return as-is for <video> tag
-  }
+function updateOnlineCount(n) {
+  document.getElementById('onlineCount').textContent          = n;
+  document.getElementById('onlineCountLandscape').textContent = n;
+}
 
-  function loadFromUrl() {
-    let url = document.getElementById('videoUrlInput').value.trim();
-    if (!url) { alert('URL daalo!'); return; }
-    url = convertDriveUrl(url);        // auto-detect & convert
-    setVideoForRoom(url, 'Video');
-    closeUploadModal();
-  }
+function escapeHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
-  // ═══════════════════════════════════════════════════════
-  //  VIDEO CORE
-  // ═══════════════════════════════════════════════════════
-  function setVideoForRoom(url, name) {
-    socket.emit('set-video', { roomId: myRoomId, videoUrl: url, videoName: name });
-    loadVideoUrl(url, name, true);
-  }
+// ─── Clear unread when user clicks chat panel ───────────
+document.getElementById('messageList').addEventListener('scroll', clearUnread);
+document.getElementById('chatPanel').addEventListener('click', clearUnread);
 
-  /**
-   * loadVideoUrl(url, name, isOwner)
-   * ---------------------------------
-   * TWO modes:
-   *   1. GDRIVE: prefix → use <iframe> (Google Drive embed)
-   *   2. Normal URL     → use <video> tag (full sync support)
-   */
-  function loadVideoUrl(url, name, isOwner) {
-    loadingOverlay.classList.add('show');
-    placeholder.style.display = 'none';
-
-    if (url.startsWith('GDRIVE:')) {
-      // ── DRIVE MODE ──────────────────────────────────────
-      const embedUrl = url.replace('GDRIVE:', ''); // strip our prefix
-      isDriveMode = true;
-
-      // Hide <video>, show <iframe>
-      video.style.display      = 'none';
-      driveFrame.style.display = 'block';
-      driveFrame.src           = embedUrl;
-
-      // Show Drive mode label
-      driveBanner.classList.add('show');
-
-      // Dim progress bar (can't control Drive iframe)
-      progressBarWrap.classList.add('drive-mode');
-
-      // Disable play/sync buttons (they don't work for Drive)
-      playBtn.disabled = true;
-      playBtn.title    = 'Drive mode — use iframe controls';
-      document.getElementById('syncBtn').disabled = true;
-
-      // Hide spinner once iframe loads
-      driveFrame.onload = () => {
-        loadingOverlay.classList.remove('show');
-        addSystemMsg('✅ "' + name + '" ready! (Google Drive embed)');
-        addSystemMsg('ℹ️ Drive mode: iframe ke andar play/pause karo');
-      };
-
-    } else {
-      // ── NORMAL VIDEO MODE ────────────────────────────────
-      isDriveMode = false;
-
-      // Hide <iframe>, show <video>
-      driveFrame.style.display = 'none';
-      driveFrame.src           = '';
-      driveBanner.classList.remove('show');
-      progressBarWrap.classList.remove('drive-mode');
-
-      // Re-enable buttons
-      playBtn.disabled = false;
-      playBtn.title    = '';
-      document.getElementById('syncBtn').disabled = false;
-
-      video.style.display = 'block';
-      video.src           = url;
-      video.load();
-
-      video.oncanplay = () => {
-        loadingOverlay.classList.remove('show');
-        addSystemMsg('✅ "' + name + '" ready!');
-      };
-
-      video.onerror = () => {
-        loadingOverlay.classList.remove('show');
-        addSystemMsg('❌ Video load nahi hua — URL check karo');
-        video.style.display = 'none';
-        placeholder.style.display = 'flex';
-      };
-
-      video.onloadedmetadata = updateTime;
-      video.ontimeupdate = () => { updateTime(); updateProgress(); };
-    }
-  }
-
-  function handleVideoClick(e) {
-    if (e.target === video) togglePlay(); // only fire for <video> clicks
-  }
-
-  function togglePlay() {
-    if (isDriveMode) {
-      addSystemMsg('ℹ️ Drive mode: iframe ke andar play/pause karo'); return;
-    }
-    if (!video.src || video.src === window.location.href) { openUploadModal(); return; }
-
-    if (video.paused) {
-      video.play().catch(() => {});
-      if (!isSyncing) socket.emit('video-play', { roomId: myRoomId, currentTime: video.currentTime });
-      updatePlayBtn(true);
-    } else {
-      video.pause();
-      if (!isSyncing) socket.emit('video-pause', { roomId: myRoomId, currentTime: video.currentTime });
-      updatePlayBtn(false);
-    }
-  }
-
-  function seekVideo(e) {
-    if (isDriveMode || !video.duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration;
-    if (!isSyncing) socket.emit('video-seek', { roomId: myRoomId, currentTime: video.currentTime });
-  }
-
-  function requestSync() {
-    if (isDriveMode) { addSystemMsg('ℹ️ Drive mode: sync nahi hoga'); return; }
-    socket.emit('request-sync', { roomId: myRoomId });
-    addSystemMsg('🔄 Sync maanga...');
-  }
-
-  function updatePlayBtn(playing) {
-    playBtn.textContent = playing ? '⏸ Pause' : '▶ Play';
-  }
-
-  function updateProgress() {
-    if (video.duration)
-      document.getElementById('progressFill').style.width =
-        (video.currentTime / video.duration * 100) + '%';
-  }
-
-  function updateTime() {
-    document.getElementById('timeDisplay').textContent =
-      formatTime(video.currentTime) + ' / ' + formatTime(video.duration || 0);
-  }
-
-  function formatTime(s) {
-    if (!s || isNaN(s)) return '0:00';
-    const m   = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return m + ':' + (sec < 10 ? '0' : '') + sec;
-  }
-
-  // ═══════════════════════════════════════════════════════
-  //  REACTIONS
-  // ═══════════════════════════════════════════════════════
-  function sendReaction(emoji) {
-    socket.emit('reaction', { roomId: myRoomId, emoji, userName: myName });
-    showFloatingReaction(emoji);
-  }
-
-  function showFloatingReaction(emoji) {
-    const el = document.createElement('div');
-    el.className   = 'reaction-float';
-    el.textContent = emoji;
-    const c = document.getElementById('videoContainer');
-    el.style.left   = (20 + Math.random() * (c.offsetWidth - 80)) + 'px';
-    el.style.bottom = '60px';
-    c.appendChild(el);
-    setTimeout(() => el.remove(), 2100);
-  }
-
-  // ═══════════════════════════════════════════════════════
-  //  CHAT
-  // ═══════════════════════════════════════════════════════
-  function sendMessage() {
-    const inp  = document.getElementById('chatInput');
-    const text = inp.value.trim();
-    if (!text) return;
-    socket.emit('chat-message', { roomId: myRoomId, message: text, userName: myName });
-    inp.value      = '';
-    inp.style.height = 'auto';
-  }
-
-  function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  }
-
-  function autoResize(el) {
-    el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 80) + 'px';
-  }
-
-  function addMsg(name, type, text, time) {
-    const t   = time || new Date().toLocaleTimeString('en', { hour:'2-digit', minute:'2-digit' });
-    const div = document.createElement('div');
-    div.className = 'msg';
-    div.innerHTML =
-      '<div class="avatar ' + type + '">' + name.substring(0, 2).toUpperCase() + '</div>' +
-      '<div class="msg-body">' +
-        '<div class="msg-name">'  + name          + '</div>' +
-        '<div class="msg-text">'  + escapeHtml(text) + '</div>' +
-        '<div class="msg-time">'  + t             + '</div>' +
-      '</div>';
-    const list = document.getElementById('messageList');
-    list.appendChild(div);
-    list.scrollTop = list.scrollHeight;
-  }
-
-  function addSystemMsg(text) {
-    const div = document.createElement('div');
-    div.className   = 'system-msg';
-    div.textContent = text;
-    const list = document.getElementById('messageList');
-    list.appendChild(div);
-    list.scrollTop = list.scrollHeight;
-  }
-
-  function updateOnlineCount(n) {
-    document.getElementById('onlineCount').textContent = n;
-  }
-
-  function escapeHtml(t) {
-    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-
-  // ═══════════════════════════════════════════════════════
-  //  KEYBOARD SHORTCUTS on JOIN SCREEN
-  // ═══════════════════════════════════════════════════════
-  document.getElementById('nameInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('roomInput').focus();
-  });
-  document.getElementById('roomInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') joinRoom();
-  });
+// ─── Enter key on join screen ───────────────────────────
+document.getElementById('nameInput').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('roomInput').focus(); });
+document.getElementById('roomInput').addEventListener('keydown', e => { if(e.key==='Enter') joinRoom(); });
 </script>
 </body>
 </html>
