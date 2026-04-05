@@ -12,7 +12,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 const rooms = {};
 
 io.on('connection', (socket) => {
-  console.log('Connected:', socket.id);
 
   socket.on('join-room', ({ roomId, userName }) => {
     socket.join(roomId);
@@ -20,35 +19,40 @@ io.on('connection', (socket) => {
     socket.roomId = roomId;
 
     if (!rooms[roomId]) {
-      rooms[roomId] = { users: [], videoTime: 0, isPlaying: false, videoName: '' };
+      rooms[roomId] = { users: [], videoTime: 0, isPlaying: false, videoUrl: '', videoName: '' };
     }
     rooms[roomId].users.push({ id: socket.id, name: userName });
 
-    // FIX 1: Sirf joiner ko confirm bhejo
+    // Joiner ko room ka current state do (video URL bhi)
     socket.emit('join-confirmed', {
       users: rooms[roomId].users,
+      videoUrl: rooms[roomId].videoUrl,
       videoName: rooms[roomId].videoName,
     });
 
-    // FIX 2: Baaki sab ko batao naya banda aaya
+    // Baaki sab ko batao
     socket.to(roomId).emit('user-joined', {
       userName,
       users: rooms[roomId].users,
     });
-
-    console.log(userName + ' joined room ' + roomId + ' (' + rooms[roomId].users.length + ' users)');
   });
 
-  // FIX 3: Video load hone pe sab ko batao
-  socket.on('video-loaded', ({ roomId, videoName }) => {
-    if (rooms[roomId]) rooms[roomId].videoName = videoName;
-    io.to(roomId).emit('video-loaded', { userName: socket.userName, videoName });
+  // Naya video set — URL server pe save karo, sab ko bhejo
+  socket.on('set-video', ({ roomId, videoUrl, videoName }) => {
+    if (rooms[roomId]) {
+      rooms[roomId].videoUrl = videoUrl;
+      rooms[roomId].videoName = videoName;
+      rooms[roomId].videoTime = 0;
+      rooms[roomId].isPlaying = false;
+    }
+    socket.to(roomId).emit('video-changed', {
+      videoUrl, videoName, userName: socket.userName
+    });
   });
 
   socket.on('chat-message', ({ roomId, message, userName }) => {
     io.to(roomId).emit('chat-message', {
-      userName,
-      message,
+      userName, message,
       time: new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit' })
     });
   });
@@ -85,10 +89,7 @@ io.on('connection', (socket) => {
     const roomId = socket.roomId;
     if (roomId && rooms[roomId]) {
       rooms[roomId].users = rooms[roomId].users.filter(u => u.id !== socket.id);
-      io.to(roomId).emit('user-left', {
-        userName: socket.userName,
-        users: rooms[roomId].users
-      });
+      io.to(roomId).emit('user-left', { userName: socket.userName, users: rooms[roomId].users });
       if (rooms[roomId].users.length === 0) delete rooms[roomId];
     }
   });
